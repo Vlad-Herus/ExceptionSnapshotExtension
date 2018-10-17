@@ -12,7 +12,8 @@
     <Grid>
         <StackPanel Orientation="Vertical">
             <TextBlock Margin="10" HorizontalAlignment="Center">SnapshotWindow</TextBlock>
-            <Button Content="Click me!" Click="button1_Click" Width="120" Height="80" Name="button1"/>
+            <Button Content="Capture" Click="Capture" Width="120" Height="80" Name="button1"/>
+            <Button Content="Restore" Click="Restore" Width="120" Height="80" Name="button2"/>
         </StackPanel>
     </Grid>
 </UserControl>
