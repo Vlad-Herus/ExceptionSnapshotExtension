@@ -40,7 +40,7 @@ namespace ExceptionSnapshotExtension.Services
         {
             SetAll((ref EXCEPTION_INFO150 info) =>
             {
-                info.dwState |= 17u ;
+                info.dwState |= 17u;
             });
         }
 
@@ -49,51 +49,33 @@ namespace ExceptionSnapshotExtension.Services
             SetAll((ref EXCEPTION_INFO150 info) => info.dwState &= 4294967278u);
         }
 
-
-
         private void SetAll(UpdateException action)
         {
             var topExceptions = GetExceptions(null);
-            var clr = topExceptions.First(info => info.bstrExceptionName == "Common Language Runtime Exceptions");
+            ExceptionInfoEnumerator e = null;
+            int res2 = 0;
 
-            var clrExceptions = GetExceptions(clr);
-            action(ref clr);
-
-            for (int i = 0; i < clrExceptions.Length; i++)
+            for (int i = 0; i < topExceptions.Length; i++)
             {
-                action(ref clrExceptions[i]);
+                action(ref topExceptions[i]);
             }
 
-            ExceptionInfoEnumerator e = new ExceptionInfoEnumerator(clrExceptions.ToList());
-            var res2 = Session.SetExceptions(e);
+            e = new ExceptionInfoEnumerator(topExceptions.ToList());
+            res2 = Session.SetExceptions(e);
 
-
-            //EXCEPTION_INFO150[] array = null;
-            //uint num = 0u;
-            //IEnumDebugExceptionInfo150 val = default(IEnumDebugExceptionInfo150);
-            //EXCEPTION_INFO150[] array2 = null;
-
-            //if (Session.EnumDefaultExceptions(array, out val) == 0 && val != null)
-            //{
-            //    uint num2 = default(uint);
-            //    val.GetCount(out num2);
-            //    array2 = (EXCEPTION_INFO150[])new EXCEPTION_INFO150[num2];
-            //    val.Next(num2, array2, ref num);
-            //}
-
-            //var clr = array2.First(info => info.bstrExceptionName == "Common Language Runtime Exceptions");
-            //action(ref clr);
-
-            ////for (int i = 0; i < array2.Count(); i++)
-            ////{
-            ////    var info = array2[i];
-
-            ////    action(ref info);
-            ////}
-
-
-            //var res = val.Reset();
-            //var res2 = session.SetExceptions(val);
+            List<EXCEPTION_INFO150> allChildren = new List<EXCEPTION_INFO150>();
+            foreach (var topException in topExceptions)
+            {
+                var childExceptions = GetExceptions(topException);
+                for (int i = 0; i < childExceptions.Count(); i++)
+                {
+                    action(ref childExceptions[i]);
+                }
+                allChildren.AddRange(childExceptions);
+                
+            }
+            e = new ExceptionInfoEnumerator(allChildren);
+            res2 = Session.SetExceptions(e);
         }
 
         private EXCEPTION_INFO150[] GetExceptions(EXCEPTION_INFO150? parent)
