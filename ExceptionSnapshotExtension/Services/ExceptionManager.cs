@@ -15,15 +15,7 @@ using System.Threading.Tasks;
 
 namespace ExceptionSnapshotExtension.Services
 {
-    internal class CallBack : IDebugExceptionCallback2
-    {
-        public int QueryStopOnException(IDebugProcess2 pProcess, IDebugProgram2 pProgram, IDebugThread2 pThread, IDebugExceptionEvent2 pEvent)
-        {
-            return 1;
-        }
-    }
-
-    internal class ExceptionManager2017
+    internal class ExceptionManager2017 : IDebugEventCallback2
     {
         private delegate void UpdateException(ref EXCEPTION_INFO150 exception, out bool changed);
 
@@ -35,6 +27,15 @@ namespace ExceptionSnapshotExtension.Services
             {
                 var debugger = Package.GetGlobalService(typeof(SVsShellDebugger)) as IDebuggerInternal15;
                 return debugger;
+            }
+        }
+
+        private IVsDebugger VsDebugger
+        {
+            get
+            {
+                ThreadHelper.ThrowIfNotOnUIThread();
+                return InternalDebugger as IVsDebugger;
             }
         }
 
@@ -66,31 +67,19 @@ namespace ExceptionSnapshotExtension.Services
 
         public ExceptionManager2017()
         {
-
         }
 
         public void EnableAll()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             var session = Session;
             if (session != null)
             {
                 if (!subscribed)
                 {
-                    var info = new EXCEPTION_INFO()
-                    {
-                        bstrExceptionName = typeof(Exception).FullName,
-                        bstrProgramName = null,
-                        dwCode = 0,
-                        pProgram = null,
-                        guidType = VSConstants.DebugEnginesGuids.ManagedOnly_guid,
-                        dwState = enum_EXCEPTION_STATE.EXCEPTION_STOP_FIRST_CHANCE
-                            | enum_EXCEPTION_STATE.EXCEPTION_STOP_SECOND_CHANCE
-                            | enum_EXCEPTION_STATE.EXCEPTION_JUST_MY_CODE_SUPPORTED
-                            | enum_EXCEPTION_STATE.EXCEPTION_STOP_USER_FIRST_CHANCE
-                            | enum_EXCEPTION_STATE.EXCEPTION_STOP_USER_UNCAUGHT
-                    };
+                    subscribed = true;
 
-                    var res = Session3.AddExceptionCallback(new EXCEPTION_INFO[] { info }, new CallBack());
+                    var res = VsDebugger.AdviseDebugEventCallback(this);
                 }
 
                 SetAll((ref EXCEPTION_INFO150 info, out bool changed) =>
@@ -144,8 +133,9 @@ namespace ExceptionSnapshotExtension.Services
 
                 if (reason == dbgEventReason.dbgEventReasonExceptionThrown || reason == dbgEventReason.dbgEventReasonExceptionNotHandled)
                 {
-                    var expr = debugger.GetExpression("$exception.GetType().Name", false, -1);
+                    var expr = debugger.GetExpression("$exception.GetType().FullName", false, -1);
                     var res = expr.Value;
+                    return res;
                 }
             }
 
@@ -229,5 +219,63 @@ namespace ExceptionSnapshotExtension.Services
                 pProgram = info.pProgram
             };
         }
+
+        public int Event(IDebugEngine2 pEngine, IDebugProcess2 pProcess, IDebugProgram2 pProgram, IDebugThread2 pThread, IDebugEvent2 pEvent, ref Guid riidEvent, uint dwAttrib)
+        {
+            // 51a94113-8788-4a54-ae15-08b74ff922d0 IDebugExceptionEvent2 IDebugExceptionEvent150 AD7StoppingEvent
+            try
+            {
+                if (typeof(IDebugExceptionEvent2).GUID == riidEvent)
+                {
+                    var e = pEvent as IDebugExceptionEvent150;
+                    e.GetExceptionDetails(out IDebugExceptionDetails details);
+                    details.GetTypeName(1, out string typeName);
+
+                    var engine150 = pEngine as IDebugEngine150;
+
+
+                    var session = Session;
+                    System.Diagnostics.Trace.WriteLine("IDebugExceptionEvent2");
+                    var topExceptions = GetExceptions(null, session);
+
+                    List<EXCEPTION_INFO150> updated = new List<EXCEPTION_INFO150>();
+                    List<EXCEPTION_INFO150> allChildren = new List<EXCEPTION_INFO150>();
+                    foreach (var topException in topExceptions)
+                    {
+                        var childExceptions = GetExceptions(topException, session);
+                        for (int i = 0; i < childExceptions.Count(); i++)
+                        {
+                            childExceptions[i].dwState &= 4294967278u;
+                            updated.Add(childExceptions[i]);
+                        }
+                        allChildren.AddRange(childExceptions);
+
+                    }
+
+                    if (updated.Any())
+                    {
+                        engine150.SetExceptions(new ExceptionInfoEnumerator(updated.ToList()));
+                    }
+                }
+                else if (Guid.Parse("04bcb310-5e1a-469c-87c6-4971e6c8483a") == riidEvent)
+                {
+                    //var ex = new ExceptionManager2017().GetCurrentExceptionType();
+                    //if (ex != null)
+                    //{
+                    //    pProgram.Continue(pThread);
+                    //}
+                }
+                else
+                {
+                    System.Diagnostics.Trace.WriteLine(riidEvent);
+                }
+            }
+            catch
+            {
+
+            }
+            return 0;
+        }
+
     }
 }
