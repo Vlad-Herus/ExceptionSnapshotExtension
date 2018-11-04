@@ -71,14 +71,19 @@
     <Compile Include="Import\IDebuggerInternal15.cs" />
     <Compile Include="Import\IDebuggerInternalEvents.cs" />
     <Compile Include="Import\IMAGEINFO_TYPE.cs" />
+    <Compile Include="Model\ExceptionInfo.cs" />
+    <Compile Include="Model\RelayCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ExceptionInfoEnumerator.cs" />
     <Compile Include="Services\ExceptionManager.cs" />
     <Compile Include="SnapshotWindow.cs" />
     <Compile Include="SnapshotWindowCommand.cs" />
-    <Compile Include="SnapshotWindowControl.xaml.cs">
+    <Compile Include="Controls\SnapshotWindowControl.xaml.cs">
       <DependentUpon>SnapshotWindowControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Viewmodels\GoVM.cs" />
+    <Compile Include="Viewmodels\SnapshotVM.cs" />
+    <Compile Include="Viewmodels\ToolWindowVM.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -225,7 +230,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="SnapshotWindowControl.xaml">
+    <Page Include="Controls\SnapshotWindowControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -10,19 +10,27 @@
              d:DesignHeight="300" d:DesignWidth="300"
              Name="MyToolWindow">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="5"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="5"/>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="10"/>
             <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-            <Button Grid.Row="1" Grid.Column="1" Content="Enable All" Click="EnableAll"/>
-            <Button Grid.Row="1" Grid.Column="3" Content="Disable All" Click="DisableAll"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Button Grid.Row="1" Grid.Column="1" Content="Enable All" Click="EnableAll"/>
+        <Button Grid.Row="1" Grid.Column="3" Content="Disable All" Click="DisableAll"/>
+        <Button Grid.Row="1" Grid.Column="5" Content="Go" Click="Go"/>
+        <CheckBox Grid.Column="1" Grid.Row="3" Content="Ignore Exception"/>
+        <CheckBox Grid.Column="3" Grid.Row="3" Content="Ignore by module"/>
     </Grid>
 </UserControl>

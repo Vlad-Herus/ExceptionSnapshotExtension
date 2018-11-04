@@ -16,7 +16,7 @@ namespace ExceptionSnapshotExtension
     /// </summary>
     public partial class SnapshotWindowControl : UserControl
     {
-        ExceptionManager m_Manager = null;
+        ExceptionManager2017 m_Manager = null;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SnapshotWindowControl"/> class.
@@ -27,7 +27,7 @@ namespace ExceptionSnapshotExtension
             Dispatcher.VerifyAccess();
             var debugger = (Package.GetGlobalService(typeof(DTE)) as DTE).Debugger as Debugger3;
             var shellDebugger = Package.GetGlobalService(typeof(SVsShellDebugger)) as SVsShellDebugger;
-            m_Manager = new ExceptionManager(debugger, shellDebugger);
+            m_Manager = new ExceptionManager2017();
         }
 
         [SuppressMessage("Microsoft.Globalization", "CA1300:SpecifyMessageBoxOptions", Justification = "Sample code")]
@@ -42,7 +42,13 @@ namespace ExceptionSnapshotExtension
         private void DisableAll(object sender, RoutedEventArgs e)
         {
             m_Manager.DisableAll();
+        }
 
+        [SuppressMessage("Microsoft.Globalization", "CA1300:SpecifyMessageBoxOptions", Justification = "Sample code")]
+        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Default event handler naming pattern")]
+        private void Go(object sender, RoutedEventArgs e)
+        {
+            m_Manager.Go(true, true);
         }
     }
 }
