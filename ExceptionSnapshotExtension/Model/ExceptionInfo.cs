@@ -6,34 +6,33 @@ using System.Threading.Tasks;
 
 namespace ExceptionSnapshotExtension.Model
 {
-    class ExceptionInfo
+    internal class ExceptionInfo
     {
         public string Name { get; }
         public string GroupName { get; }
         public bool BreakFirstChance { get; set; }
-        public bool SupportsConditions { get; }
         public List<Condition> Conditions { get; set; }
     }
 
-    class Condition
+    internal class Condition
     {
         public string Pattern { get; set; }
         public bool PositiveComparison { get; set; }
     }
 
-    class Spapshot
+    internal class Spapshot
     {
-        IEnumerable<ExceptionInfo> Exceptions { get; }
+        private IEnumerable<ExceptionInfo> Exceptions { get; }
     }
 
-    interface IExceptionManager
+    internal interface IExceptionManager
     {
-        event Action ExceptionCaught;
+        ExceptionInfo CurrentException { get; }
 
         void EnableAll();
         void DisableAll();
 
-        void AddIgnoreCurrentException(bool respectModule, bool continueExecution);
+        void AddExceptionToIgnoreList(ExceptionInfo info);
 
         void RestoreSnapshot(Spapshot snapshot);
     }

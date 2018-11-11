@@ -81,8 +81,6 @@
     <Compile Include="Controls\SnapshotWindowControl.xaml.cs">
       <DependentUpon>SnapshotWindowControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Viewmodels\GoVM.cs" />
-    <Compile Include="Viewmodels\SnapshotVM.cs" />
     <Compile Include="Viewmodels\ToolWindowVM.cs" />
   </ItemGroup>
   <ItemGroup>

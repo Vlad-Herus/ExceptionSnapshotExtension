@@ -17,7 +17,25 @@ namespace ExceptionSnapshotExtension.Services
 {
     internal class ExceptionManager2017 : IDebugEventCallback2
     {
+        private static ExceptionManager2017 m_Isntance = null;
+        public static ExceptionManager2017 Instance
+        {
+            get
+            {
+                if (m_Isntance == null)
+                {
+                    m_Isntance = new ExceptionManager2017();
+                }
+
+                return m_Isntance;
+            }
+        }
+
         private delegate void UpdateException(ref EXCEPTION_INFO150 exception, out bool changed);
+
+        public bool AutoSkipExceptions { get; set; } = false;
+        public bool AddExceptionsToIgnoreList { get; set; } = false;
+        public bool RespectModuleName { get; set; } = false;
 
         private bool subscribed = false;
 
@@ -75,13 +93,6 @@ namespace ExceptionSnapshotExtension.Services
             var session = Session;
             if (session != null)
             {
-                if (!subscribed)
-                {
-                    subscribed = true;
-
-                    var res = VsDebugger.AdviseDebugEventCallback(this);
-                }
-
                 SetAll((ref EXCEPTION_INFO150 info, out bool changed) =>
                 {
                     System.Diagnostics.Trace.WriteLine(info.guidType + "  :  " + info.bstrExceptionName);
@@ -113,7 +124,7 @@ namespace ExceptionSnapshotExtension.Services
             }
         }
 
-        public void Go(bool addExceptionToIgnore, bool includeModule)
+        public void Go()
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
@@ -140,6 +151,17 @@ namespace ExceptionSnapshotExtension.Services
             }
 
             return null;
+        }
+
+        public void AttachEvents()
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+            if (!subscribed)
+            {
+                subscribed = true;
+
+                var res = VsDebugger.AdviseDebugEventCallback(this);
+            }
         }
 
         private void SetAll(UpdateException action, IDebugSession150 session)
@@ -230,6 +252,7 @@ namespace ExceptionSnapshotExtension.Services
                     var e = pEvent as IDebugExceptionEvent150;
                     e.GetExceptionDetails(out IDebugExceptionDetails details);
                     details.GetTypeName(1, out string typeName);
+                    details.GetSource(out string sourceName);
 
                     var engine150 = pEngine as IDebugEngine150;
 
@@ -247,9 +270,13 @@ namespace ExceptionSnapshotExtension.Services
                         {
                             childExceptions[i].dwState &= 4294967278u;
                             updated.Add(childExceptions[i]);
+
+                            if (childExceptions[i].bstrExceptionName == typeName.Trim('\"'))
+                            {
+                                pEngine.SetException(new EXCEPTION_INFO[] { Convert(childExceptions[i]) });
+                            }
                         }
                         allChildren.AddRange(childExceptions);
-
                     }
 
                     if (updated.Any())
@@ -259,11 +286,14 @@ namespace ExceptionSnapshotExtension.Services
                 }
                 else if (Guid.Parse("04bcb310-5e1a-469c-87c6-4971e6c8483a") == riidEvent)
                 {
-                    //var ex = new ExceptionManager2017().GetCurrentExceptionType();
-                    //if (ex != null)
-                    //{
-                    //    pProgram.Continue(pThread);
-                    //}
+                    if (AutoSkipExceptions)
+                    {
+                        var ex = new ExceptionManager2017().GetCurrentExceptionType();
+                        if (ex != null)
+                        {
+                            pProgram.Continue(pThread);
+                        }
+                    }
                 }
                 else
                 {
@@ -276,6 +306,5 @@ namespace ExceptionSnapshotExtension.Services
             }
             return 0;
         }
-
     }
 }

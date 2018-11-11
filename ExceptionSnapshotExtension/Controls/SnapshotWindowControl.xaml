@@ -4,33 +4,65 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:vsshell="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.14.0"
+             xmlns:VM="clr-namespace:ExceptionSnapshotExtension.Viewmodels;assembly=ExceptionSnapshotExtension"
              Background="{DynamicResource {x:Static vsshell:VsBrushes.WindowKey}}"
              Foreground="{DynamicResource {x:Static vsshell:VsBrushes.WindowTextKey}}"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
+             d:DataContext="{d:DesignInstance Type=VM:ToolWindowVM, IsDesignTimeCreatable=True}"
              Name="MyToolWindow">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="5"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="10"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="10"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="10"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="5"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="10"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <Button Grid.Row="1" Grid.Column="1" Content="Enable All" Click="EnableAll"/>
-        <Button Grid.Row="1" Grid.Column="3" Content="Disable All" Click="DisableAll"/>
-        <Button Grid.Row="1" Grid.Column="5" Content="Go" Click="Go"/>
-        <CheckBox Grid.Column="1" Grid.Row="3" Content="Ignore Exception"/>
-        <CheckBox Grid.Column="3" Grid.Row="3" Content="Ignore by module"/>
+        <TabControl>
+            <TabItem Header="Snapshot">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="5"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="5"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Button Grid.Row="1" Grid.Column="1" Content="Enable All" Command="{Binding EnableAllCommand}"/>
+                    <Button Grid.Row="1" Grid.Column="3" Content="Disable All" Command="{Binding DisableAllCommand}"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Control">
+                <Grid >
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Button Grid.Row="1" Grid.Column="1" Content="Skip this exception" Command="{Binding GoCommand}"/>
+                    <CheckBox Grid.Column="3" Grid.Row="1" VerticalAlignment="Center" Content="Auto Skip" IsChecked="{Binding AutoSkip}"/>
+                    <CheckBox Grid.Column="1" Grid.Row="3" Content="Add to Ignore list" IsChecked="{Binding AddToIgnoreList}"/>
+                    <CheckBox Grid.Column="1" Grid.Row="5" Content="Ignore by module" IsChecked="{Binding RespectModuleName}"/>
+                    <Label Grid.Column="3" Grid.Row="5" Visibility="Hidden" Margin="0" Padding="0" Content="Only supported in VS2017"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
     </Grid>
 </UserControl>

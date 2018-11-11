@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using ExceptionSnapshotExtension.Services;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell;
@@ -71,6 +72,7 @@ namespace ExceptionSnapshotExtension
             // Do any initialization that requires the UI thread after switching to the UI thread.
             await this.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
             await SnapshotWindowCommand.InitializeAsync(this);
+            ExceptionManager2017.Instance.AttachEvents();
         }
 
         #endregion
