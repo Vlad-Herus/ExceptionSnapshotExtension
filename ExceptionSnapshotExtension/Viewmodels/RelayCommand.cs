@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace ExceptionSnapshotExtension.Model
+namespace ExceptionSnapshotExtension.Viewmodels
 {
     public class RelayCommand : ICommand
     {

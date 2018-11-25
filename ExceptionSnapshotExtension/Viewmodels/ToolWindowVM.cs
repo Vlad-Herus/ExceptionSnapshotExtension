@@ -19,14 +19,14 @@ namespace ExceptionSnapshotExtension.Viewmodels
         {
             get
             {
-                return m_ExceptionManager.AutoSkipExceptions;
+                return false;
             }
             set
             {
-                if (m_ExceptionManager.AutoSkipExceptions != value)
-                {
-                    m_ExceptionManager.AutoSkipExceptions = value;
-                }
+                //if (m_ExceptionManager.AutoSkipExceptions != value)
+                //{
+                //    m_ExceptionManager.AutoSkipExceptions = value;
+                //}
             }
         }
 
@@ -34,14 +34,14 @@ namespace ExceptionSnapshotExtension.Viewmodels
         {
             get
             {
-                return m_ExceptionManager.AddExceptionsToIgnoreList;
+                return false;
             }
             set
             {
-                if (m_ExceptionManager.AddExceptionsToIgnoreList != value)
-                {
-                    m_ExceptionManager.AddExceptionsToIgnoreList = value;
-                }
+                //if (m_ExceptionManager.AddExceptionsToIgnoreList != value)
+                //{
+                //    m_ExceptionManager.AddExceptionsToIgnoreList = value;
+                //}
             }
         }
 
@@ -49,14 +49,14 @@ namespace ExceptionSnapshotExtension.Viewmodels
         {
             get
             {
-                return m_ExceptionManager.RespectModuleName;
+                return false;
             }
             set
             {
-                if (m_ExceptionManager.RespectModuleName != value)
-                {
-                    m_ExceptionManager.RespectModuleName = value;
-                }
+                //if (m_ExceptionManager.RespectModuleName != value)
+                //{
+                //    m_ExceptionManager.RespectModuleName = value;
+                //}
             }
         }
 

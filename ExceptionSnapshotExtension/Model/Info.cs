@@ -11,7 +11,7 @@ namespace ExceptionSnapshotExtension.Model
         public string Name { get; }
         public string GroupName { get; }
         public bool BreakFirstChance { get; set; }
-        public List<Condition> Conditions { get; set; }
+        public Condition[] Conditions { get; set; }
     }
 
     internal class Condition
@@ -20,20 +20,8 @@ namespace ExceptionSnapshotExtension.Model
         public bool PositiveComparison { get; set; }
     }
 
-    internal class Spapshot
+    internal class Snapshot
     {
-        private IEnumerable<ExceptionInfo> Exceptions { get; }
-    }
-
-    internal interface IExceptionManager
-    {
-        ExceptionInfo CurrentException { get; }
-
-        void EnableAll();
-        void DisableAll();
-
-        void AddExceptionToIgnoreList(ExceptionInfo info);
-
-        void RestoreSnapshot(Spapshot snapshot);
+        public ExceptionInfo[] Exceptions { get; set; }
     }
 }

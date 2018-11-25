@@ -71,8 +71,9 @@
     <Compile Include="Import\IDebuggerInternal15.cs" />
     <Compile Include="Import\IDebuggerInternalEvents.cs" />
     <Compile Include="Import\IMAGEINFO_TYPE.cs" />
-    <Compile Include="Model\ExceptionInfo.cs" />
-    <Compile Include="Model\RelayCommand.cs" />
+    <Compile Include="Model\IExceptionManager.cs" />
+    <Compile Include="Model\Info.cs" />
+    <Compile Include="Viewmodels\RelayCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ExceptionInfoEnumerator.cs" />
     <Compile Include="Services\ExceptionManager.cs" />

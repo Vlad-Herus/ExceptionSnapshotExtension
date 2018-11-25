@@ -33,10 +33,6 @@ namespace ExceptionSnapshotExtension.Services
 
         private delegate void UpdateException(ref EXCEPTION_INFO150 exception, out bool changed);
 
-        public bool AutoSkipExceptions { get; set; } = false;
-        public bool AddExceptionsToIgnoreList { get; set; } = false;
-        public bool RespectModuleName { get; set; } = false;
-
         private bool subscribed = false;
 
         private IDebuggerInternal15 InternalDebugger
@@ -112,15 +108,6 @@ namespace ExceptionSnapshotExtension.Services
                     changed = true;
                     info.dwState &= 4294967278u;
                 }, session);
-            }
-        }
-
-        public void Enable(string clrExceptionType)
-        {
-            var session = Session;
-            if (session != null)
-            {
-                //session.
             }
         }
 
@@ -249,51 +236,56 @@ namespace ExceptionSnapshotExtension.Services
             {
                 if (typeof(IDebugExceptionEvent2).GUID == riidEvent)
                 {
-                    var e = pEvent as IDebugExceptionEvent150;
-                    e.GetExceptionDetails(out IDebugExceptionDetails details);
-                    details.GetTypeName(1, out string typeName);
-                    details.GetSource(out string sourceName);
+                    //var e2 = pEvent as IDebugExceptionEvent2;
+                    //var e = pEvent as IDebugExceptionEvent150;
+                    //var cp = e2.CanPassToDebuggee();
+                    //EXCEPTION_INFO150 info = new EXCEPTION_INFO150();
+                    //var arr = new EXCEPTION_INFO150[] { info };
+                    //var res = e.GetException(arr);
+                    //res = e2.PassToDebuggee(1);
 
-                    var engine150 = pEngine as IDebugEngine150;
+                    //e.GetExceptionDetails(out IDebugExceptionDetails details);
+                    //details.GetTypeName(1, out string typeName);
+                    //details.GetSource(out string sourceName);
+
+                    //var engine150 = pEngine as IDebugEngine150;
 
 
                     var session = Session;
                     System.Diagnostics.Trace.WriteLine("IDebugExceptionEvent2");
-                    var topExceptions = GetExceptions(null, session);
+                    //var topExceptions = GetExceptions(null, session);
 
-                    List<EXCEPTION_INFO150> updated = new List<EXCEPTION_INFO150>();
-                    List<EXCEPTION_INFO150> allChildren = new List<EXCEPTION_INFO150>();
-                    foreach (var topException in topExceptions)
-                    {
-                        var childExceptions = GetExceptions(topException, session);
-                        for (int i = 0; i < childExceptions.Count(); i++)
-                        {
-                            childExceptions[i].dwState &= 4294967278u;
-                            updated.Add(childExceptions[i]);
+                    //List<EXCEPTION_INFO150> updated = new List<EXCEPTION_INFO150>();
+                    //List<EXCEPTION_INFO150> allChildren = new List<EXCEPTION_INFO150>();
+                    //foreach (var topException in topExceptions)
+                    //{
+                    //    var childExceptions = GetExceptions(topException, session);
+                    //    for (int i = 0; i < childExceptions.Count(); i++)
+                    //    {
+                    //        childExceptions[i].dwState &= 4294967278u;
+                    //        updated.Add(childExceptions[i]);
 
-                            if (childExceptions[i].bstrExceptionName == typeName.Trim('\"'))
-                            {
-                                pEngine.SetException(new EXCEPTION_INFO[] { Convert(childExceptions[i]) });
-                            }
-                        }
-                        allChildren.AddRange(childExceptions);
-                    }
+                    //        if (childExceptions[i].bstrExceptionName == typeName.Trim('\"'))
+                    //        {
+                    //            pEngine.SetException(new EXCEPTION_INFO[] { Convert(childExceptions[i]) });
+                    //        }
+                    //    }
+                    //    allChildren.AddRange(childExceptions);
+                    //}
 
-                    if (updated.Any())
-                    {
-                        engine150.SetExceptions(new ExceptionInfoEnumerator(updated.ToList()));
-                    }
+                    //if (updated.Any())
+                    //{
+                    //    engine150.SetExceptions(new ExceptionInfoEnumerator(updated.ToList()));
+                    //}
                 }
                 else if (Guid.Parse("04bcb310-5e1a-469c-87c6-4971e6c8483a") == riidEvent)
                 {
-                    if (AutoSkipExceptions)
-                    {
-                        var ex = new ExceptionManager2017().GetCurrentExceptionType();
-                        if (ex != null)
-                        {
-                            pProgram.Continue(pThread);
-                        }
-                    }
+                    System.Diagnostics.Trace.WriteLine("Try 1");
+                    //var ex = new ExceptionManager2017().GetCurrentExceptionType();
+                    //if (ex != null)
+                    //{
+                    //pProgram.Continue(pThread);
+                    //}
                 }
                 else
                 {
