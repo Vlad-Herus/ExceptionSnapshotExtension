@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ExceptionSnapshotExtension.Services
 {
-    class ExceptionInfoEnumerator : IEnumDebugExceptionInfo150
+    class ExceptionInfoEnumerator2017 : IEnumDebugExceptionInfo150
     {
         private readonly IList<EXCEPTION_INFO150> _data;
 
@@ -15,9 +15,9 @@ namespace ExceptionSnapshotExtension.Services
 
         private object _syncObj = new object();
 
-        internal ExceptionInfoEnumerator(IList<EXCEPTION_INFO150> data)
+        internal ExceptionInfoEnumerator2017(IEnumerable<EXCEPTION_INFO150> data)
         {
-            _data = data;
+            _data = data.ToList();
         }
 
         public int Clone(out IEnumDebugExceptionInfo150 ppEnum)

@@ -15,16 +15,16 @@ using System.Threading.Tasks;
 
 namespace ExceptionSnapshotExtension.Services
 {
-    internal class ExceptionManager2017 : IDebugEventCallback2
+    internal class ExceptionManagerProto : IDebugEventCallback2
     {
-        private static ExceptionManager2017 m_Isntance = null;
-        public static ExceptionManager2017 Instance
+        private static ExceptionManagerProto m_Isntance = null;
+        public static ExceptionManagerProto Instance
         {
             get
             {
                 if (m_Isntance == null)
                 {
-                    m_Isntance = new ExceptionManager2017();
+                    m_Isntance = new ExceptionManagerProto();
                 }
 
                 return m_Isntance;
@@ -79,7 +79,7 @@ namespace ExceptionSnapshotExtension.Services
             }
         }
 
-        public ExceptionManager2017()
+        public ExceptionManagerProto()
         {
         }
 
@@ -167,7 +167,7 @@ namespace ExceptionSnapshotExtension.Services
 
             if (updated.Any())
             {
-                session.SetExceptions(new ExceptionInfoEnumerator(updated.ToList()));
+                session.SetExceptions(new ExceptionInfoEnumerator2017(updated.ToList()));
                 updated.Clear();
             }
 
@@ -189,7 +189,7 @@ namespace ExceptionSnapshotExtension.Services
 
             if (updated.Any())
             {
-                session.SetExceptions(new ExceptionInfoEnumerator(updated.ToList()));
+                session.SetExceptions(new ExceptionInfoEnumerator2017(updated.ToList()));
             }
         }
 

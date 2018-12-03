@@ -73,10 +73,12 @@
     <Compile Include="Import\IMAGEINFO_TYPE.cs" />
     <Compile Include="Model\IExceptionManager.cs" />
     <Compile Include="Model\Info.cs" />
+    <Compile Include="Services\Constants.cs" />
+    <Compile Include="Services\Manager2017.cs" />
     <Compile Include="Viewmodels\RelayCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ExceptionInfoEnumerator.cs" />
-    <Compile Include="Services\ExceptionManager.cs" />
+    <Compile Include="Services\ExceptionManagerProto.cs" />
     <Compile Include="SnapshotWindow.cs" />
     <Compile Include="SnapshotWindowCommand.cs" />
     <Compile Include="Controls\SnapshotWindowControl.xaml.cs">

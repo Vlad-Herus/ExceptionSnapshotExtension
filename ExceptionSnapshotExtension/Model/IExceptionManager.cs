@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ExceptionSnapshotExtension.Model
 {
-    internal delegate void OnExceptionDelegade(string exceptionName, string exceptionModule, ref bool continueExecution);
+    internal delegate void OnExceptionDelegade(ExceptionInfo info, string modlueName, ref bool continueExecution);
 
     internal interface IExceptionManager
     {

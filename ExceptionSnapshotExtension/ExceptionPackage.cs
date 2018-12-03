@@ -72,7 +72,7 @@ namespace ExceptionSnapshotExtension
             // Do any initialization that requires the UI thread after switching to the UI thread.
             await this.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
             await SnapshotWindowCommand.InitializeAsync(this);
-            ExceptionManager2017.Instance.AttachEvents();
+            ExceptionManagerProto.Instance.AttachEvents();
         }
 
         #endregion

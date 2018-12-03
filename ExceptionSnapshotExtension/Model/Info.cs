@@ -12,6 +12,12 @@ namespace ExceptionSnapshotExtension.Model
         public string GroupName { get; }
         public bool BreakFirstChance { get; set; }
         public Condition[] Conditions { get; set; }
+
+        public ExceptionInfo(string name, string groupName)
+        {
+            Name = name;
+            GroupName = groupName;
+        }
     }
 
     internal class Condition

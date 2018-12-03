@@ -10,7 +10,7 @@ namespace ExceptionSnapshotExtension.Viewmodels
 {
     internal class ToolWindowVM
     {
-        private readonly ExceptionManager2017 m_ExceptionManager;
+        private readonly ExceptionManagerProto m_ExceptionManager;
         private RelayCommand m_GoCommand;
         private RelayCommand m_EnableAllCommand;
         private RelayCommand m_DisableAllCommand;
@@ -113,7 +113,7 @@ namespace ExceptionSnapshotExtension.Viewmodels
         public ToolWindowVM() // For designer
         { }
 
-        public ToolWindowVM(ExceptionManager2017 exceptionManager)
+        public ToolWindowVM(ExceptionManagerProto exceptionManager)
         {
             m_ExceptionManager = exceptionManager;
         }
