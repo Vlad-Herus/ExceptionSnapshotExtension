@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ExceptionSnapshotExtension.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,7 +11,29 @@ namespace ExceptionSnapshotExtension.Model
     {
         public string Name { get; }
         public string GroupName { get; }
-        public bool BreakFirstChance { get; set; }
+        public uint NativeCode { get; set; }
+        public bool BreakFirstChance
+        {
+            get
+            {
+                return Constants.SetToBreakFirstChance(NativeCode);
+            }
+            set
+            {
+                uint code = NativeCode;
+
+                if (value)
+                {
+                    Constants.EnableException(ref code);
+                }
+                else
+                {
+                    Constants.EnableException(ref code);
+                }
+
+                NativeCode = code;
+            }
+        }
         public Condition[] Conditions { get; set; }
 
         public ExceptionInfo(string name, string groupName)

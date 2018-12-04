@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ExceptionSnapshotExtension.Services
 {
-    class ExceptionInfoEnumerator2017 : IEnumDebugExceptionInfo150
+    internal class ExceptionInfoEnumerator2017 : IEnumDebugExceptionInfo150
     {
         private readonly IList<EXCEPTION_INFO150> _data;
 
@@ -78,6 +78,19 @@ namespace ExceptionSnapshotExtension.Services
                 _position += celtFetched;
                 return result;
             }
+        }
+    }
+
+    public static class IEnumDebugExceptionInfo150Extension
+    {
+        public static EXCEPTION_INFO150[] ToArray(this IEnumDebugExceptionInfo150 enumerator)
+        {
+            uint num = 0; 
+            uint count = default(uint);
+            enumerator.GetCount(out count);
+            var array = (EXCEPTION_INFO150[])new EXCEPTION_INFO150[count];
+            enumerator.Next(count, array, ref num);
+            return array;
         }
     }
 }

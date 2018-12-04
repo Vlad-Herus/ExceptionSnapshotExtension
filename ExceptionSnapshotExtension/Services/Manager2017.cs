@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace ExceptionSnapshotExtension.Services
 {
-    class Manager2017 : IExceptionManager
+    internal class Manager2017 : IExceptionManager
     {
         private delegate void UpdateException(ref EXCEPTION_INFO150 exception, out bool changed);
 
@@ -38,7 +38,7 @@ namespace ExceptionSnapshotExtension.Services
 
         #endregion
 
-        bool SessionAvailable => Session != null;
+        private bool SessionAvailable => Session != null;
 
         private EXCEPTION_INFO150[] m_TopExceptions;
 
@@ -90,12 +90,38 @@ namespace ExceptionSnapshotExtension.Services
 
         public Snapshot GetCurrentExceptionSnapshot()
         {
-            throw new NotImplementedException();
+            if (SessionAvailable)
+            {
+                var exceptions = new List<EXCEPTION_INFO150>();
+                IEnumDebugExceptionInfo150 enumerator = default(IEnumDebugExceptionInfo150);
+                foreach (var topException in TopExceptions)
+                {
+                    if (Session.EnumSetExceptions(topException.guidType, out enumerator) == 0 && enumerator != null)
+                    {
+                        exceptions.AddRange(enumerator.ToArray());
+                    }
+                }
+
+                return new Snapshot
+                {
+                    Exceptions = exceptions.Select(ex => Convert(ex)).ToArray()
+                };
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public void RestoreSnapshot(Snapshot snapshot)
         {
-            throw new NotImplementedException();
+            if (SessionAvailable)
+            {
+                ExceptionInfoEnumerator2017 enumerator =
+                    new ExceptionInfoEnumerator2017(snapshot.Exceptions.Select(ex => Convert(ex)));
+                //TODO: Check results of the api calls. Log errors.
+                Session.SetExceptions(enumerator);
+            }
         }
 
         private void SetAll(UpdateException action)
@@ -140,34 +166,39 @@ namespace ExceptionSnapshotExtension.Services
 
         private EXCEPTION_INFO150[] GetExceptions(EXCEPTION_INFO150? parent)
         {
-            uint num = 0u;
-            EXCEPTION_INFO150[] array = (EXCEPTION_INFO150[])((!parent.HasValue) ? null : new EXCEPTION_INFO150[1]
+            var parentArray = (!parent.HasValue) ? null : new EXCEPTION_INFO150[]
             {
                 parent.Value
-            });
+            };
+
             IEnumDebugExceptionInfo150 val = default(IEnumDebugExceptionInfo150);
-            EXCEPTION_INFO150[] array2;
-            if (Session.EnumDefaultExceptions(array, out val) == 0 && val != null)
+            if (Session.EnumDefaultExceptions(parentArray, out val) == 0 && val != null)
             {
-                uint num2 = default(uint);
-                val.GetCount(out num2);
-                array2 = (EXCEPTION_INFO150[])new EXCEPTION_INFO150[num2];
-                val.Next(num2, array2, ref num);
+                return val.ToArray();
             }
             else
             {
-                array2 = (EXCEPTION_INFO150[])new EXCEPTION_INFO150[0];
+                return new EXCEPTION_INFO150[] { };
             }
-            return array2;
         }
 
         private ExceptionInfo Convert(EXCEPTION_INFO150 info)
         {
             return new ExceptionInfo(info.bstrExceptionName, TopExceptions.First(ex => ex.guidType == info.guidType).bstrExceptionName)
             {
-                BreakFirstChance = info.SetToBreakFirstChance(),
+                NativeCode = info.dwCode
                 // TODO: conditions
-                //Conditions
+            };
+        }
+
+        private EXCEPTION_INFO150 Convert(ExceptionInfo info)
+        {
+            return new EXCEPTION_INFO150
+            {
+                bstrExceptionName = info.Name,
+                guidType = TopExceptions.First(ex => ex.bstrExceptionName == info.GroupName).guidType,
+                dwCode = info.NativeCode
+                // TODO: conditions
             };
         }
     }

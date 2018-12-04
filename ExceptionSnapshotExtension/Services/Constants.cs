@@ -22,14 +22,9 @@ namespace ExceptionSnapshotExtension.Services
             exceptioncode &= EXCEPTION_CODE_DISABLE;
         }
 
-        public static bool SetToBreakFirstChance(this EXCEPTION_INFO150 exeption)
+        public static bool SetToBreakFirstChance(uint exceptioncode)
         {
-            return (exeption.dwCode & EXCEPTION_CODE_ENABLE) == EXCEPTION_CODE_ENABLE;
-        }
-
-        public static bool SetToBreakFirstChance(this EXCEPTION_INFO exeption)
-        {
-            return (exeption.dwCode & EXCEPTION_CODE_ENABLE) == EXCEPTION_CODE_ENABLE;
+            return (exceptioncode & EXCEPTION_CODE_ENABLE) == EXCEPTION_CODE_ENABLE;
         }
     }
 }

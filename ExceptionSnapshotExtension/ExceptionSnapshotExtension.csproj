@@ -73,6 +73,7 @@
     <Compile Include="Import\IMAGEINFO_TYPE.cs" />
     <Compile Include="Model\IExceptionManager.cs" />
     <Compile Include="Model\Info.cs" />
+    <Compile Include="Model\IserializeService.cs" />
     <Compile Include="Services\Constants.cs" />
     <Compile Include="Services\Manager2017.cs" />
     <Compile Include="Viewmodels\RelayCommand.cs" />
