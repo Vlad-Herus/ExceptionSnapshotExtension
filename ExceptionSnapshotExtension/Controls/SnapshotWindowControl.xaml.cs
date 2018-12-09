@@ -27,7 +27,7 @@ namespace ExceptionSnapshotExtension
             var debugger = (Package.GetGlobalService(typeof(DTE)) as DTE).Debugger as Debugger3;
             var shellDebugger = Package.GetGlobalService(typeof(SVsShellDebugger)) as SVsShellDebugger;
 
-            this.DataContext = new ToolWindowVM(ExceptionManagerProto.Instance);
+            this.DataContext = new ToolWindowVM(new Manager2017());
         }
     }
 }

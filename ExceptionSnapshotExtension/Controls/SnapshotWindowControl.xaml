@@ -5,64 +5,95 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:vsshell="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.14.0"
              xmlns:VM="clr-namespace:ExceptionSnapshotExtension.Viewmodels;assembly=ExceptionSnapshotExtension"
+             xmlns:Ctr="clr-namespace:ExceptionSnapshotExtension.Controls"
+             xmlns:acb="clr-namespace:AttachedCommandBehavior"
              Background="{DynamicResource {x:Static vsshell:VsBrushes.WindowKey}}"
              Foreground="{DynamicResource {x:Static vsshell:VsBrushes.WindowTextKey}}"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
              d:DataContext="{d:DesignInstance Type=VM:ToolWindowVM, IsDesignTimeCreatable=True}"
              Name="MyToolWindow">
+    <UserControl.Resources>
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="Padding" Value="7,0,7,0"/>
+        </Style>
+    </UserControl.Resources>
     <Grid>
-        <TabControl>
-            <TabItem Header="Snapshot">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="5"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="10"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="10"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="10"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="5"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="10"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <Button Grid.Row="1" Grid.Column="1" Content="Enable All" Command="{Binding EnableAllCommand}"/>
-                    <Button Grid.Row="1" Grid.Column="3" Content="Disable All" Command="{Binding DisableAllCommand}"/>
-                </Grid>
-            </TabItem>
-            <TabItem Header="Control">
-                <Grid >
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="10"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="10"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="10"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="10"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="10"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="10"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Button Grid.Row="1" Grid.Column="1" Content="Skip this exception" Command="{Binding GoCommand}"/>
-                    <CheckBox Grid.Column="3" Grid.Row="1" VerticalAlignment="Center" Content="Auto Skip" IsChecked="{Binding AutoSkip}"/>
-                    <CheckBox Grid.Column="1" Grid.Row="3" Content="Add to Ignore list" IsChecked="{Binding AddToIgnoreList}"/>
-                    <CheckBox Grid.Column="1" Grid.Row="5" Content="Ignore by module" IsChecked="{Binding RespectModuleName}"/>
-                    <Label Grid.Column="3" Grid.Row="5" Visibility="Hidden" Margin="0" Padding="0" Content="Only supported in VS2017"/>
-                </Grid>
-            </TabItem>
-        </TabControl>
+        <Grid Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="10"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="10"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal">
+                <Button Content="Enable All" Command="{Binding EnableAllCommand}"/>
+                <Button Margin="10,0,0,0" Content="Disable All" Command="{Binding DisableAllCommand}"/>
+            </StackPanel>
+            <StackPanel Grid.Row="2" Orientation="Horizontal">
+                <Button Content="Save Snapshot" Command="{Binding SaveSnapshotCommand}"/>
+                <Button Margin="10,0,0,0" Content="Restore Snapshot" Command="{Binding RestoreSnapshotCommand}"/>
+                <TextBox Margin="10,0,0,0" MinWidth="80" Text="{Binding NewSnapshotName, Mode=TwoWay}" />
+            </StackPanel>
+            <ListView Grid.Row="4" ItemsSource="{Binding Snapshots}">
+                <ListView.Resources>
+                    <Ctr:DataContextSpy x:Key="dataContextSpy"/>
+                    <Style TargetType="{x:Type ListViewItem}">
+                        <Setter Property="acb:CommandBehavior.Event" Value="MouseDoubleClick"/>
+                        <Setter Property="acb:CommandBehavior.Command" Value="{Binding Source={StaticResource dataContextSpy}, Path=DataContext.ActivateSnapshotCommand}"/>
+                        <Setter Property="acb:CommandBehavior.CommandParameter" Value="{Binding}" />
+                    </Style>
+                </ListView.Resources>
+                
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Width="Auto" Header="Name" DisplayMemberBinding="{Binding Name}"/>
+                        <GridViewColumn Width="Auto" Header="Break">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <CheckBox IsChecked="{Binding Break}"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Width="Auto" Header="Modules">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="Empty"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+
+            </ListView>
+        </Grid>
+        <GroupBox Header="Control" Visibility="Collapsed">
+            <Grid >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="10"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="10"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="10"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="10"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Row="1" Grid.Column="1" Content="Skip this exception" Command="{Binding GoCommand}"/>
+                <CheckBox Grid.Column="3" Grid.Row="1" VerticalAlignment="Center" Content="Auto Skip" IsChecked="{Binding AutoSkip}"/>
+                <CheckBox Grid.Column="1" Grid.Row="3" Content="Add to Ignore list" IsChecked="{Binding AddToIgnoreList}"/>
+                <CheckBox Grid.Column="1" Grid.Row="5" Content="Ignore by module" IsChecked="{Binding RespectModuleName}"/>
+                <Label Grid.Column="3" Grid.Row="5" Visibility="Hidden" Margin="0" Padding="0" Content="Only supported in VS2017"/>
+            </Grid>
+        </GroupBox>
     </Grid>
 </UserControl>

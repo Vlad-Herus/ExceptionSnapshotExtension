@@ -2,81 +2,27 @@
 using ExceptionSnapshotExtension.Services;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace ExceptionSnapshotExtension.Viewmodels
 {
-    internal class ToolWindowVM
+    internal class ToolWindowVM : INotifyPropertyChanged
     {
-        private readonly ExceptionManagerProto m_ExceptionManager;
-        private RelayCommand m_GoCommand;
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private readonly IExceptionManager m_ExceptionManager;
         private RelayCommand m_EnableAllCommand;
         private RelayCommand m_DisableAllCommand;
-
-        public bool AutoSkip
-        {
-            get
-            {
-                return false;
-            }
-            set
-            {
-                //if (m_ExceptionManager.AutoSkipExceptions != value)
-                //{
-                //    m_ExceptionManager.AutoSkipExceptions = value;
-                //}
-            }
-        }
-
-        public bool AddToIgnoreList
-        {
-            get
-            {
-                return false;
-            }
-            set
-            {
-                //if (m_ExceptionManager.AddExceptionsToIgnoreList != value)
-                //{
-                //    m_ExceptionManager.AddExceptionsToIgnoreList = value;
-                //}
-            }
-        }
-
-        public bool RespectModuleName
-        {
-            get
-            {
-                return false;
-            }
-            set
-            {
-                //if (m_ExceptionManager.RespectModuleName != value)
-                //{
-                //    m_ExceptionManager.RespectModuleName = value;
-                //}
-            }
-        }
+        private RelayCommand m_SaveSnapshotCommand;
+        private RelayCommand m_ActivateSnapshotCommand;
 
 
-
-        public RelayCommand GoCommand
-        {
-            get
-            {
-                if (m_GoCommand == null)
-                {
-                    m_GoCommand = new RelayCommand(p => true, p =>
-                    {
-                        m_ExceptionManager.Go();
-                    });
-                }
-
-                return m_GoCommand;
-            }
-        }
+        public ObservableCollection<SnapshotVM> Snapshots { get; private set; }
+        public string NewSnapshotName { get; set; }
 
         public RelayCommand EnableAllCommand
         {
@@ -110,12 +56,62 @@ namespace ExceptionSnapshotExtension.Viewmodels
             }
         }
 
-        public ToolWindowVM() // For designer
-        { }
+        public RelayCommand SaveSnapshotCommand
+        {
+            get
+            {
+                if (m_SaveSnapshotCommand == null)
+                {
+                    m_SaveSnapshotCommand = new RelayCommand(p => true, p =>
+                    {
+                        var snapshot = m_ExceptionManager.GetCurrentExceptionSnapshot();
+                        snapshot.Name = NewSnapshotName;
+                        Snapshots.Add(new SnapshotVM(snapshot));
+                        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Snapshots)));
+                    });
+                }
 
-        public ToolWindowVM(ExceptionManagerProto exceptionManager)
+                return m_SaveSnapshotCommand;
+            }
+        }
+
+        public RelayCommand ActivateSnapshotCommand
+        {
+            get
+            {
+                if (m_ActivateSnapshotCommand == null)
+                {
+                    m_ActivateSnapshotCommand = new RelayCommand(p => true, p =>
+                    {
+                        if (p is SnapshotVM snapshotVM)
+                        {
+                            m_ExceptionManager.RestoreSnapshot(snapshotVM.Snapshot);
+                        }
+                    });
+                }
+
+                return m_ActivateSnapshotCommand;
+            }
+        }
+
+        public ToolWindowVM() // For designer
+        {
+            Snapshots = new ObservableCollection<SnapshotVM>
+            (
+                new SnapshotVM[]
+                {
+                    new SnapshotVM(new Snapshot
+                    {
+                        Name = "TEst Shot"
+                    })
+                }
+            );
+        }
+
+        public ToolWindowVM(IExceptionManager exceptionManager)
         {
             m_ExceptionManager = exceptionManager;
+            Snapshots = new ObservableCollection<SnapshotVM>();
         }
     }
 }

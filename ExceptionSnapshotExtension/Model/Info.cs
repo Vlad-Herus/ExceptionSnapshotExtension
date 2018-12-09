@@ -11,27 +11,27 @@ namespace ExceptionSnapshotExtension.Model
     {
         public string Name { get; }
         public string GroupName { get; }
-        public uint NativeCode { get; set; }
+        public uint State { get; set; }
         public bool BreakFirstChance
         {
             get
             {
-                return Constants.SetToBreakFirstChance(NativeCode);
+                return Constants.SetToBreakFirstChance(State);
             }
             set
             {
-                uint code = NativeCode;
+                uint state = State;
 
                 if (value)
                 {
-                    Constants.EnableException(ref code);
+                    Constants.EnableException(ref state);
                 }
                 else
                 {
-                    Constants.EnableException(ref code);
+                    Constants.EnableException(ref state);
                 }
 
-                NativeCode = code;
+                State = state;
             }
         }
         public Condition[] Conditions { get; set; }
@@ -51,6 +51,7 @@ namespace ExceptionSnapshotExtension.Model
 
     internal class Snapshot
     {
+        public string Name { get; set; }
         public ExceptionInfo[] Exceptions { get; set; }
     }
 }

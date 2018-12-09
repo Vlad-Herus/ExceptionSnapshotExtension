@@ -9,24 +9,26 @@ namespace ExceptionSnapshotExtension.Viewmodels
 {
     public class RelayCommand : ICommand
     {
-        private Predicate<object> _canExecute;
-        private Action<object> _execute;
+        private Predicate<object> m_CanExecute;
+        private Action<object> m_Execute;
+#pragma warning disable 67
         public event EventHandler CanExecuteChanged;
+#pragma warning restore 67
 
         public RelayCommand(Predicate<object> canExecute, Action<object> execute)
         {
-            this._canExecute = canExecute;
-            this._execute = execute;
+            this.m_CanExecute = canExecute;
+            this.m_Execute = execute;
         }
 
         public bool CanExecute(object parameter)
         {
-            return _canExecute(parameter);
+            return m_CanExecute(parameter);
         }
 
         public void Execute(object parameter)
         {
-            _execute(parameter);
+            m_Execute(parameter);
         }
     }
 }

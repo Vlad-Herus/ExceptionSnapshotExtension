@@ -91,7 +91,7 @@ namespace ExceptionSnapshotExtension.Services
             {
                 SetAll((ref EXCEPTION_INFO150 info, out bool changed) =>
                 {
-                    System.Diagnostics.Trace.WriteLine(info.guidType + "  :  " + info.bstrExceptionName);
+                    System.Diagnostics.Trace.WriteLine(info.dwCode + "  :  " + info.bstrExceptionName);
                     changed = true;
                     info.dwState |= 17u;
                 }, session);

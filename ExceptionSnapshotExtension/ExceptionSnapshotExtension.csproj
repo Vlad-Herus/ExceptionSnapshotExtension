@@ -54,6 +54,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AttachedCommandBehavior\BehaviorBinding.cs" />
+    <Compile Include="AttachedCommandBehavior\CommandBehavior.cs" />
+    <Compile Include="AttachedCommandBehavior\CommandBehaviorBinding.cs" />
+    <Compile Include="AttachedCommandBehavior\CommandBehaviorCollection.cs" />
+    <Compile Include="AttachedCommandBehavior\EventHandlerGenerator.cs" />
+    <Compile Include="AttachedCommandBehavior\ExecutionStrategy.cs" />
+    <Compile Include="AttachedCommandBehavior\SimpleCommand.cs" />
+    <Compile Include="Controls\DataContextSpy.cs" />
     <Compile Include="ExceptionPackage.cs" />
     <Compile Include="Import\BREAKPOINT_EDIT_OPERATION.cs" />
     <Compile Include="Import\BREAKPOINT_FILTER_TYPE.cs" />
@@ -76,6 +84,9 @@
     <Compile Include="Model\IserializeService.cs" />
     <Compile Include="Services\Constants.cs" />
     <Compile Include="Services\Manager2017.cs" />
+    <Compile Include="Viewmodels\ExceptionInfoVM.cs" />
+    <Compile Include="Viewmodels\GroupVM.cs" />
+    <Compile Include="Viewmodels\IListItem.cs" />
     <Compile Include="Viewmodels\RelayCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ExceptionInfoEnumerator.cs" />
@@ -85,6 +96,7 @@
     <Compile Include="Controls\SnapshotWindowControl.xaml.cs">
       <DependentUpon>SnapshotWindowControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Viewmodels\SnapshotVM.cs" />
     <Compile Include="Viewmodels\ToolWindowVM.cs" />
   </ItemGroup>
   <ItemGroup>

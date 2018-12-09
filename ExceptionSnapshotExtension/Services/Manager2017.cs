@@ -15,7 +15,10 @@ namespace ExceptionSnapshotExtension.Services
     {
         private delegate void UpdateException(ref EXCEPTION_INFO150 exception, out bool changed);
 
+#pragma warning disable 67 //TODO: use or remove
         public event OnExceptionDelegade ExceptionCaught;
+#pragma warning restore 67
+
 
         #region Services
 
@@ -83,6 +86,7 @@ namespace ExceptionSnapshotExtension.Services
                 SetAll((ref EXCEPTION_INFO150 info, out bool changed) =>
                 {
                     changed = true;
+                    System.Diagnostics.Trace.WriteLine(info.dwCode);
                     Constants.EnableException(ref info.dwState);
                 });
             }
@@ -117,8 +121,15 @@ namespace ExceptionSnapshotExtension.Services
         {
             if (SessionAvailable)
             {
+                var topExceptions = snapshot.Exceptions.Where(ex => TopExceptions.Any(top => top.bstrExceptionName == ex.Name));
+
                 ExceptionInfoEnumerator2017 enumerator =
-                    new ExceptionInfoEnumerator2017(snapshot.Exceptions.Select(ex => Convert(ex)));
+                    new ExceptionInfoEnumerator2017(topExceptions.Select(ex => Convert(ex)));
+                //TODO: Check results of the api calls. Log errors.
+                Session.SetExceptions(enumerator);
+
+                enumerator =
+                    new ExceptionInfoEnumerator2017(snapshot.Exceptions.Except(topExceptions).Select(ex => Convert(ex)));
                 //TODO: Check results of the api calls. Log errors.
                 Session.SetExceptions(enumerator);
             }
@@ -186,7 +197,7 @@ namespace ExceptionSnapshotExtension.Services
         {
             return new ExceptionInfo(info.bstrExceptionName, TopExceptions.First(ex => ex.guidType == info.guidType).bstrExceptionName)
             {
-                NativeCode = info.dwCode
+                State = info.dwState
                 // TODO: conditions
             };
         }
@@ -197,7 +208,7 @@ namespace ExceptionSnapshotExtension.Services
             {
                 bstrExceptionName = info.Name,
                 guidType = TopExceptions.First(ex => ex.bstrExceptionName == info.GroupName).guidType,
-                dwCode = info.NativeCode
+                dwState = info.State
                 // TODO: conditions
             };
         }
