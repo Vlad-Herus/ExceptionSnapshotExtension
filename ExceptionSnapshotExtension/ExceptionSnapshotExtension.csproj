@@ -81,9 +81,11 @@
     <Compile Include="Import\IMAGEINFO_TYPE.cs" />
     <Compile Include="Model\IExceptionManager.cs" />
     <Compile Include="Model\Info.cs" />
-    <Compile Include="Model\IserializeService.cs" />
     <Compile Include="Services\Constants.cs" />
+    <Compile Include="Services\JsonSerialize.cs" />
     <Compile Include="Services\Manager2017.cs" />
+    <Compile Include="Model\ISerialize.cs" />
+    <Compile Include="Services\SolutionStorage.cs" />
     <Compile Include="Viewmodels\ExceptionInfoVM.cs" />
     <Compile Include="Viewmodels\GroupVM.cs" />
     <Compile Include="Viewmodels\IListItem.cs" />

@@ -6,6 +6,7 @@ using Microsoft.VisualStudio.Shell.Interop;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -121,6 +122,12 @@ namespace ExceptionSnapshotExtension.Services
         {
             if (SessionAvailable)
             {
+                Guid guidType = Guid.Empty;
+                Marshal.ThrowExceptionForHR(
+                    InternalDebugger.CurrentSession.RemoveAllSetExceptions(ref guidType));
+
+                //TODO: For exceptions that are being set to default value call RemoveSetExceptions() instead of SetExceptions
+
                 var topExceptions = snapshot.Exceptions.Where(ex => TopExceptions.Any(top => top.bstrExceptionName == ex.Name));
 
                 ExceptionInfoEnumerator2017 enumerator =

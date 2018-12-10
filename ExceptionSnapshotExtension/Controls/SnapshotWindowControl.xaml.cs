@@ -24,10 +24,7 @@ namespace ExceptionSnapshotExtension
         {
             this.InitializeComponent();
             Dispatcher.VerifyAccess();
-            var debugger = (Package.GetGlobalService(typeof(DTE)) as DTE).Debugger as Debugger3;
-            var shellDebugger = Package.GetGlobalService(typeof(SVsShellDebugger)) as SVsShellDebugger;
-
-            this.DataContext = new ToolWindowVM(new Manager2017());
+            this.DataContext = ExceptionPackage.MasterViewModel;
         }
     }
 }

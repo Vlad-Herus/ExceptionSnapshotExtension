@@ -3,10 +3,13 @@ using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using ExceptionSnapshotExtension.Model;
 using ExceptionSnapshotExtension.Services;
+using ExceptionSnapshotExtension.Viewmodels;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell;
@@ -45,6 +48,12 @@ namespace ExceptionSnapshotExtension
         /// ExceptionPackage GUID string.
         /// </summary>
         public const string PackageGuidString = "adc51aeb-591e-44f7-99e8-6dc173da31a0";
+        private const string SETTINGS_KEY = "VladH_ExceptionPackage_Snapshots";
+
+        // I'm making an assumption here that VS will not instantiate more than one ExceptionPackage per app domain
+        internal static ToolWindowVM MasterViewModel { get; private set; }
+        Model.ISerialize m_SnapshotSerializer;
+        IExceptionManager m_ExceptionManager;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ExceptionPackage"/> class.
@@ -55,6 +64,10 @@ namespace ExceptionSnapshotExtension
             // any Visual Studio service because at this point the package object is created but
             // not sited yet inside Visual Studio environment. The place to do all the other
             // initialization is the Initialize method.
+            this.AddOptionKey(SETTINGS_KEY);
+            m_SnapshotSerializer = new JsonSerialize();
+            m_ExceptionManager = new Manager2017();
+            MasterViewModel = new ToolWindowVM(m_ExceptionManager);
         }
 
         #region Package Members
@@ -73,6 +86,23 @@ namespace ExceptionSnapshotExtension
             await this.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
             await SnapshotWindowCommand.InitializeAsync(this);
             ExceptionManagerProto.Instance.AttachEvents();
+        }
+
+        protected override void OnSaveOptions(string key, Stream stream)
+        {
+            if (key != SETTINGS_KEY)
+            {
+                base.OnSaveOptions(key, stream);
+            }
+            else
+            {
+
+            }
+        }
+
+        protected override void OnLoadOptions(string key, Stream stream)
+        {
+            base.OnLoadOptions(key, stream);
         }
 
         #endregion
