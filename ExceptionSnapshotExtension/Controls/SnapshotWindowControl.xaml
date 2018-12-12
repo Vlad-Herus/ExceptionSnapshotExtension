@@ -36,7 +36,7 @@
                 <Button Margin="10,0,0,0" Content="Restore Snapshot" Command="{Binding RestoreSnapshotCommand}"/>
                 <TextBox Margin="10,0,0,0" MinWidth="80" Text="{Binding NewSnapshotName, Mode=TwoWay}" />
             </StackPanel>
-            <ListView Grid.Row="4" ItemsSource="{Binding Snapshots}">
+            <ListView Grid.Row="4" ItemsSource="{Binding SnapshotVms}">
                 <ListView.Resources>
                     <Ctr:DataContextSpy x:Key="dataContextSpy"/>
                     <Style TargetType="{x:Type ListViewItem}">

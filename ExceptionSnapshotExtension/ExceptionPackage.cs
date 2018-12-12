@@ -1,4 +1,12 @@
-﻿using System;
+﻿using ExceptionSnapshotExtension.Model;
+using ExceptionSnapshotExtension.Services;
+using ExceptionSnapshotExtension.Viewmodels;
+using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.OLE.Interop;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.Win32;
+using System;
 using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -7,14 +15,6 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using ExceptionSnapshotExtension.Model;
-using ExceptionSnapshotExtension.Services;
-using ExceptionSnapshotExtension.Viewmodels;
-using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.OLE.Interop;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.Win32;
 using Task = System.Threading.Tasks.Task;
 
 namespace ExceptionSnapshotExtension
@@ -48,12 +48,13 @@ namespace ExceptionSnapshotExtension
         /// ExceptionPackage GUID string.
         /// </summary>
         public const string PackageGuidString = "adc51aeb-591e-44f7-99e8-6dc173da31a0";
-        private const string SETTINGS_KEY = "VladH_ExceptionPackage_Snapshots";
+        private const string SETTINGS_KEY = "VladHExceptionPackageSnapshots";
 
         // I'm making an assumption here that VS will not instantiate more than one ExceptionPackage per app domain
         internal static ToolWindowVM MasterViewModel { get; private set; }
-        Model.ISerialize m_SnapshotSerializer;
-        IExceptionManager m_ExceptionManager;
+
+        private readonly Model.ISerialize m_SnapshotSerializer;
+        private readonly IExceptionManager m_ExceptionManager;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ExceptionPackage"/> class.
@@ -96,13 +97,30 @@ namespace ExceptionSnapshotExtension
             }
             else
             {
+                try
+                {
+                    //TODO: see what will happen if exception is thrown here
+                    m_SnapshotSerializer.Serialize(MasterViewModel.Snapshots, stream);
+                }
+                catch (Exception ex)
+                {
 
+                }
             }
         }
 
         protected override void OnLoadOptions(string key, Stream stream)
         {
-            base.OnLoadOptions(key, stream);
+            if (key != SETTINGS_KEY)
+            {
+                base.OnSaveOptions(key, stream);
+            }
+            else
+            {
+                //TODO: add error handling
+                var snaposhots = m_SnapshotSerializer.Deserialize(stream);
+                MasterViewModel.Snapshots = snaposhots;
+            }
         }
 
         #endregion

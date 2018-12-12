@@ -85,7 +85,6 @@
     <Compile Include="Services\JsonSerialize.cs" />
     <Compile Include="Services\Manager2017.cs" />
     <Compile Include="Model\ISerialize.cs" />
-    <Compile Include="Services\SolutionStorage.cs" />
     <Compile Include="Viewmodels\ExceptionInfoVM.cs" />
     <Compile Include="Viewmodels\GroupVM.cs" />
     <Compile Include="Viewmodels\IListItem.cs" />
@@ -198,6 +197,9 @@
     <Reference Include="Microsoft.VisualStudio.Validation, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.VisualStudio.Validation.14.1.111\lib\net45\Microsoft.VisualStudio.Validation.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="stdole, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
@@ -236,6 +238,10 @@
       <ResourceName>Menus.ctmenu</ResourceName>
       <SubType>Designer</SubType>
     </VSCTCompile>
+    <Content Include="..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll">
+      <Link>Newtonsoft.Json.dll</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Content Include="Resources\ExceptionPackage.ico" />
     <Content Include="Resources\SnapshotWindowCommand.png" />
   </ItemGroup>

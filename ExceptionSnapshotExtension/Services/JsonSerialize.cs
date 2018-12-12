@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ExceptionSnapshotExtension.Model;
+using Newtonsoft.Json;
 
 namespace ExceptionSnapshotExtension.Services
 {
@@ -12,12 +13,22 @@ namespace ExceptionSnapshotExtension.Services
     {
         public IEnumerable<Snapshot> Deserialize(Stream snapshots)
         {
-            throw new NotImplementedException();
+            using (StreamReader sr = new StreamReader(snapshots))
+            using (JsonReader reader = new JsonTextReader(sr))
+            {
+                JsonSerializer serializer = new JsonSerializer();
+                return serializer.Deserialize<IEnumerable<Snapshot>>(reader);
+            }
         }
 
-        public Stream Serialize(IEnumerable<Snapshot> snapshots)
+        public void Serialize(IEnumerable<Snapshot> snapshots, Stream targetStream)
         {
-            throw new NotImplementedException();
+            using (StreamWriter sw = new StreamWriter(targetStream))
+            using (JsonWriter writer = new JsonTextWriter(sw))
+            {
+                JsonSerializer serializer = new JsonSerializer();
+                serializer.Serialize(writer, snapshots);
+            }
         }
     }
 }

@@ -20,8 +20,23 @@ namespace ExceptionSnapshotExtension.Viewmodels
         private RelayCommand m_SaveSnapshotCommand;
         private RelayCommand m_ActivateSnapshotCommand;
 
+        public ObservableCollection<SnapshotVM> SnapshotVms { get; private set; }
 
-        public ObservableCollection<SnapshotVM> Snapshots { get; private set; }
+        public IEnumerable<Snapshot> Snapshots
+        {
+            get
+            {
+                return SnapshotVms.Select(vm => vm.Snapshot);
+            }
+            set
+            {
+                SnapshotVms.Clear();
+                foreach (var snapshot in value ?? new Snapshot[] { })
+                {
+                    SnapshotVms.Add(new SnapshotVM(snapshot));
+                }
+            }
+        }
         public string NewSnapshotName { get; set; }
 
         public RelayCommand EnableAllCommand
@@ -66,8 +81,8 @@ namespace ExceptionSnapshotExtension.Viewmodels
                     {
                         var snapshot = m_ExceptionManager.GetCurrentExceptionSnapshot();
                         snapshot.Name = NewSnapshotName;
-                        Snapshots.Add(new SnapshotVM(snapshot));
-                        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Snapshots)));
+                        SnapshotVms.Add(new SnapshotVM(snapshot));
+                        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SnapshotVms)));
                     });
                 }
 
@@ -96,7 +111,7 @@ namespace ExceptionSnapshotExtension.Viewmodels
 
         public ToolWindowVM() // For designer
         {
-            Snapshots = new ObservableCollection<SnapshotVM>
+            SnapshotVms = new ObservableCollection<SnapshotVM>
             (
                 new SnapshotVM[]
                 {
@@ -111,7 +126,7 @@ namespace ExceptionSnapshotExtension.Viewmodels
         public ToolWindowVM(IExceptionManager exceptionManager)
         {
             m_ExceptionManager = exceptionManager;
-            Snapshots = new ObservableCollection<SnapshotVM>();
+            SnapshotVms = new ObservableCollection<SnapshotVM>();
         }
     }
 }
