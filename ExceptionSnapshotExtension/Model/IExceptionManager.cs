@@ -12,6 +12,8 @@ namespace ExceptionSnapshotExtension.Model
     {
         event OnExceptionDelegade ExceptionCaught;
 
+        bool SupportsConditions { get; }
+
         /// <summary>
         /// Null if debugger is not in break mode because of exception
         /// </summary>

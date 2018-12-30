@@ -42,6 +42,8 @@ namespace ExceptionSnapshotExtension.Services
 
         #endregion
 
+        public bool SupportsConditions => true;
+
         private bool SessionAvailable => Session != null;
 
         private EXCEPTION_INFO150[] m_TopExceptions;
@@ -204,8 +206,9 @@ namespace ExceptionSnapshotExtension.Services
         {
             return new ExceptionInfo(info.bstrExceptionName, TopExceptions.First(ex => ex.guidType == info.guidType).bstrExceptionName)
             {
-                State = info.dwState
-                // TODO: conditions
+                State = info.dwState,
+                Code = info.dwCode,
+                Conditions = info.pConditions.ToArray()
             };
         }
 
@@ -215,8 +218,9 @@ namespace ExceptionSnapshotExtension.Services
             {
                 bstrExceptionName = info.Name,
                 guidType = TopExceptions.First(ex => ex.bstrExceptionName == info.GroupName).guidType,
-                dwState = info.State
-                // TODO: conditions
+                dwState = info.State,
+                dwCode = info.Code,
+                pConditions = new ConditionEnumerator(info.Conditions ?? new Condition[] { })
             };
         }
     }

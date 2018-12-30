@@ -54,14 +54,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AttachedCommandBehavior\BehaviorBinding.cs" />
-    <Compile Include="AttachedCommandBehavior\CommandBehavior.cs" />
-    <Compile Include="AttachedCommandBehavior\CommandBehaviorBinding.cs" />
-    <Compile Include="AttachedCommandBehavior\CommandBehaviorCollection.cs" />
-    <Compile Include="AttachedCommandBehavior\EventHandlerGenerator.cs" />
-    <Compile Include="AttachedCommandBehavior\ExecutionStrategy.cs" />
-    <Compile Include="AttachedCommandBehavior\SimpleCommand.cs" />
-    <Compile Include="Controls\DataContextSpy.cs" />
+    <Compile Include="UI\AttachedCommandBehavior\BehaviorBinding.cs" />
+    <Compile Include="UI\AttachedCommandBehavior\CommandBehavior.cs" />
+    <Compile Include="UI\AttachedCommandBehavior\CommandBehaviorBinding.cs" />
+    <Compile Include="UI\AttachedCommandBehavior\CommandBehaviorCollection.cs" />
+    <Compile Include="UI\AttachedCommandBehavior\EventHandlerGenerator.cs" />
+    <Compile Include="UI\AttachedCommandBehavior\ExecutionStrategy.cs" />
+    <Compile Include="UI\AttachedCommandBehavior\SimpleCommand.cs" />
+    <Compile Include="UI\Controls\DataContextSpy.cs" />
     <Compile Include="ExceptionPackage.cs" />
     <Compile Include="Import\BREAKPOINT_EDIT_OPERATION.cs" />
     <Compile Include="Import\BREAKPOINT_FILTER_TYPE.cs" />
@@ -81,24 +81,26 @@
     <Compile Include="Import\IMAGEINFO_TYPE.cs" />
     <Compile Include="Model\IExceptionManager.cs" />
     <Compile Include="Model\Info.cs" />
+    <Compile Include="Services\ConditionEnumerator.cs" />
+    <Compile Include="Services\ConditionExtension.cs" />
     <Compile Include="Services\Constants.cs" />
     <Compile Include="Services\JsonSerialize.cs" />
     <Compile Include="Services\Manager2017.cs" />
     <Compile Include="Model\ISerialize.cs" />
-    <Compile Include="Viewmodels\ExceptionInfoVM.cs" />
-    <Compile Include="Viewmodels\GroupVM.cs" />
-    <Compile Include="Viewmodels\IListItem.cs" />
-    <Compile Include="Viewmodels\RelayCommand.cs" />
+    <Compile Include="UI\Viewmodels\ExceptionInfoVM.cs" />
+    <Compile Include="UI\Viewmodels\GroupVM.cs" />
+    <Compile Include="UI\Viewmodels\IListItem.cs" />
+    <Compile Include="UI\Viewmodels\RelayCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ExceptionInfoEnumerator.cs" />
     <Compile Include="Services\ExceptionManagerProto.cs" />
     <Compile Include="SnapshotWindow.cs" />
     <Compile Include="SnapshotWindowCommand.cs" />
-    <Compile Include="Controls\SnapshotWindowControl.xaml.cs">
+    <Compile Include="UI\Controls\SnapshotWindowControl.xaml.cs">
       <DependentUpon>SnapshotWindowControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Viewmodels\SnapshotVM.cs" />
-    <Compile Include="Viewmodels\ToolWindowVM.cs" />
+    <Compile Include="UI\Viewmodels\SnapshotVM.cs" />
+    <Compile Include="UI\Viewmodels\ToolWindowVM.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -234,6 +236,7 @@
     <Analyzer Include="..\packages\Microsoft.VisualStudio.Threading.Analyzers.15.8.122\analyzers\cs\Microsoft.VisualStudio.Threading.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="TODO.txt" />
     <VSCTCompile Include="ExceptionPackage.vsct">
       <ResourceName>Menus.ctmenu</ResourceName>
       <SubType>Designer</SubType>
@@ -252,7 +255,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Controls\SnapshotWindowControl.xaml">
+    <Page Include="UI\Controls\SnapshotWindowControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

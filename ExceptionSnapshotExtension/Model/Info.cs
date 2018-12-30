@@ -1,4 +1,5 @@
 ﻿using ExceptionSnapshotExtension.Services;
+using Microsoft.VisualStudio.Debugger.Interop;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,7 @@ namespace ExceptionSnapshotExtension.Model
         public string Name { get; }
         public string GroupName { get; }
         public uint State { get; set; }
+        public uint Code { get; set; }
         public bool BreakFirstChance
         {
             get
@@ -43,10 +45,15 @@ namespace ExceptionSnapshotExtension.Model
         }
     }
 
-    internal class Condition
+    internal class Condition : IDebugExceptionCondition
     {
-        public string Pattern { get; set; }
-        public bool PositiveComparison { get; set; }
+        public EXCEPTION_CONDITION_TYPE Type { get; set; }
+
+        public EXCEPTION_CONDITION_CALLSTACK_BEHAVIOR CallStackBehavior { get; set; }
+
+        public EXCEPTION_CONDITION_OPERATOR Operator { get; set; }
+
+        public string Value { get; set; }
     }
 
     internal class Snapshot

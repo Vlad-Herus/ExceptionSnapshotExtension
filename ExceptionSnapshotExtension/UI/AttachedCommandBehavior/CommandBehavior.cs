@@ -189,7 +189,11 @@ namespace AttachedCommandBehavior
             if (binding.Event != null && binding.Owner != null)
                 binding.Dispose();
             //bind the new event to the command
-            binding.BindEvent(d, e.NewValue.ToString());
+            string newValue = e.NewValue.ToString();
+            if (!string.IsNullOrEmpty(newValue))
+            {
+                binding.BindEvent(d, newValue);
+            }
         }
 
         #endregion

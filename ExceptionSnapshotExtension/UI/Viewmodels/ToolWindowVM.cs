@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,6 +19,7 @@ namespace ExceptionSnapshotExtension.Viewmodels
         private RelayCommand m_EnableAllCommand;
         private RelayCommand m_DisableAllCommand;
         private RelayCommand m_SaveSnapshotCommand;
+        private RelayCommand m_DeleteSnapshotCommand;
         private RelayCommand m_ActivateSnapshotCommand;
 
         public ObservableCollection<SnapshotVM> SnapshotVms { get; private set; }
@@ -38,6 +40,16 @@ namespace ExceptionSnapshotExtension.Viewmodels
             }
         }
         public string NewSnapshotName { get; set; }
+        
+        /// <summary>
+        /// One way to source binding
+        /// </summary>
+        public SnapshotVM SelectedSnapshot { get; set; }
+        
+        /// <summary>
+        /// Two way binding
+        /// </summary>
+        public int SelectedSnapshotIndex { get; set; }
 
         public RelayCommand EnableAllCommand
         {
@@ -87,6 +99,32 @@ namespace ExceptionSnapshotExtension.Viewmodels
                 }
 
                 return m_SaveSnapshotCommand;
+            }
+        }
+
+        public RelayCommand DeleteSnapshotCommand
+        {
+            get
+            {
+                if (m_DeleteSnapshotCommand == null)
+                {
+                    m_DeleteSnapshotCommand = new RelayCommand(p => true, p =>
+                    {
+                        if (SelectedSnapshot != null)
+                        {
+                            Debug.Assert(SnapshotVms.Contains(SelectedSnapshot));
+
+                            int selectedId = SelectedSnapshotIndex;
+                            SnapshotVms.Remove(SelectedSnapshot);
+                            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SnapshotVms)));
+
+                            SelectedSnapshotIndex = SnapshotVms.Count > selectedId ? selectedId : SnapshotVms.Count - 1;
+                            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedSnapshotIndex)));
+                        }
+                    });
+                }
+
+                return m_DeleteSnapshotCommand;
             }
         }
 

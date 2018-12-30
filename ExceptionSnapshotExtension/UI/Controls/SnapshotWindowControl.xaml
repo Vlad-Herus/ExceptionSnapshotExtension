@@ -33,23 +33,33 @@
             </StackPanel>
             <StackPanel Grid.Row="2" Orientation="Horizontal">
                 <Button Content="Save Snapshot" Command="{Binding SaveSnapshotCommand}"/>
-                <Button Margin="10,0,0,0" Content="Restore Snapshot" Command="{Binding RestoreSnapshotCommand}"/>
                 <TextBox Margin="10,0,0,0" MinWidth="80" Text="{Binding NewSnapshotName, Mode=TwoWay}" />
+                <Button Margin="10,0,0,0" Content="Delete Selected" Command="{Binding DeleteSnapshotCommand}" />
             </StackPanel>
-            <ListView Grid.Row="4" ItemsSource="{Binding SnapshotVms}">
+            <ListView Grid.Row="4" ItemsSource="{Binding SnapshotVms}" SelectedValue="{Binding SelectedSnapshot, Mode=OneWayToSource}" SelectedIndex="{Binding SelectedSnapshotIndex, Mode=TwoWay}">
                 <ListView.Resources>
                     <Ctr:DataContextSpy x:Key="dataContextSpy"/>
                     <Style TargetType="{x:Type ListViewItem}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Path=FieldDef.DispDetail, Mode=OneWay}" Value="False">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                         <Setter Property="acb:CommandBehavior.Event" Value="MouseDoubleClick"/>
                         <Setter Property="acb:CommandBehavior.Command" Value="{Binding Source={StaticResource dataContextSpy}, Path=DataContext.ActivateSnapshotCommand}"/>
                         <Setter Property="acb:CommandBehavior.CommandParameter" Value="{Binding}" />
+                        <!--<Setter Property="acb:CommandBehaviorCollection.Behaviors">
+                            <Setter.Value>
+                                <acb:BehaviorBinding Event="MouseRightButtonDown" Command="{Binding Source={StaticResource dataContextSpy}, Path=DataContext.ActivateSnapshotCommand}" CommandParameter="{Binding}"/>
+                            </Setter.Value>
+                        </Setter>-->
                     </Style>
                 </ListView.Resources>
-                
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Width="Auto" Header="Name" DisplayMemberBinding="{Binding Name}"/>
-                        <GridViewColumn Width="Auto" Header="Break">
+                        <!--<GridViewColumn Width="Auto" Header="Break">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <CheckBox IsChecked="{Binding Break}"/>
@@ -62,10 +72,9 @@
                                     <TextBlock Text="Empty"/>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
+                        </GridViewColumn>-->
                     </GridView>
                 </ListView.View>
-
             </ListView>
         </Grid>
         <GroupBox Header="Control" Visibility="Collapsed">
