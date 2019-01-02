@@ -155,7 +155,7 @@ namespace ExceptionSnapshotExtension.Viewmodels
                 {
                     new SnapshotVM(new Snapshot
                     {
-                        Name = "TEst Shot"
+                        Name = "Test Shot"
                     })
                 }
             );

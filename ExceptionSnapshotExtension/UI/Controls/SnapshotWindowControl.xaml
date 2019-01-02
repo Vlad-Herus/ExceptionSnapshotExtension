@@ -14,8 +14,29 @@
              d:DataContext="{d:DesignInstance Type=VM:ToolWindowVM, IsDesignTimeCreatable=True}"
              Name="MyToolWindow">
     <UserControl.Resources>
+        <Style TargetType="{x:Type TextBox}">
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static vsshell:VsBrushes.SortTextKey}}"/>
+            <Setter Property="Background" Value="{DynamicResource {x:Static vsshell:VsBrushes.SortBackgroundKey}}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vsshell:VsBrushes.SearchBoxBorderKey}}"/>
+        </Style>
         <Style TargetType="{x:Type Button}">
             <Setter Property="Padding" Value="7,0,7,0"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static vsshell:VsBrushes.ButtonTextKey}}"/>
+            <Setter Property="Background" Value="{DynamicResource {x:Static vsshell:VsBrushes.DockTargetButtonBackgroundGradientKey}}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource {x:Static vsshell:VsBrushes.ButtonHighlightKey}}"/>
+                </Trigger>
+            </Style.Triggers>
         </Style>
     </UserControl.Resources>
     <Grid>
@@ -33,10 +54,19 @@
             </StackPanel>
             <StackPanel Grid.Row="2" Orientation="Horizontal">
                 <Button Content="Save Snapshot" Command="{Binding SaveSnapshotCommand}"/>
-                <TextBox Margin="10,0,0,0" MinWidth="80" Text="{Binding NewSnapshotName, Mode=TwoWay}" />
+                <TextBox Margin="10,0,0,0" MinWidth="80" MaxWidth="200" Text="{Binding NewSnapshotName, Mode=TwoWay}" />
                 <Button Margin="10,0,0,0" Content="Delete Selected" Command="{Binding DeleteSnapshotCommand}" />
             </StackPanel>
-            <ListView Grid.Row="4" ItemsSource="{Binding SnapshotVms}" SelectedValue="{Binding SelectedSnapshot, Mode=OneWayToSource}" SelectedIndex="{Binding SelectedSnapshotIndex, Mode=TwoWay}">
+            <ListView 
+                Grid.Row="4" 
+                ItemsSource="{Binding SnapshotVms}" 
+                SelectedValue="{Binding SelectedSnapshot, Mode=OneWayToSource}" 
+                SelectedIndex="{Binding SelectedSnapshotIndex, Mode=TwoWay}"
+                Foreground="{DynamicResource {x:Static vsshell:VsBrushes.PanelTextKey}}"
+                Background="{DynamicResource {x:Static vsshell:VsBrushes.DropDownBackgroundKey}}"
+                BorderBrush="{DynamicResource {x:Static vsshell:VsBrushes.PanelBorderKey}}"
+                Loaded="ListView_Loaded"
+                SizeChanged="ListView_SizeChanged">
                 <ListView.Resources>
                     <Ctr:DataContextSpy x:Key="dataContextSpy"/>
                     <Style TargetType="{x:Type ListViewItem}">
@@ -54,6 +84,25 @@
                                 <acb:BehaviorBinding Event="MouseRightButtonDown" Command="{Binding Source={StaticResource dataContextSpy}, Path=DataContext.ActivateSnapshotCommand}" CommandParameter="{Binding}"/>
                             </Setter.Value>
                         </Setter>-->
+                    </Style>
+                    <Style TargetType="{x:Type GridViewColumnHeader}">
+                        <Setter Property="Foreground" Value="{DynamicResource {x:Static vsshell:VsBrushes.PanelTextKey}}"/>
+                        <Setter Property="Background" Value="{DynamicResource {x:Static vsshell:VsBrushes.DropDownBackgroundKey}}"/>
+                        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vsshell:VsBrushes.PanelBorderKey}}"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type GridViewColumnHeader}">
+                                    <Border Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource {x:Static vsshell:VsBrushes.ButtonHighlightKey}}"/>
+                            </Trigger>
+                        </Style.Triggers>
                     </Style>
                 </ListView.Resources>
                 <ListView.View>
