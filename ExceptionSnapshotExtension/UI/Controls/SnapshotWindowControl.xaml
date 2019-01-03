@@ -54,7 +54,7 @@
             </StackPanel>
             <StackPanel Grid.Row="2" Orientation="Horizontal">
                 <Button Content="Save Snapshot" Command="{Binding SaveSnapshotCommand}"/>
-                <TextBox Margin="10,0,0,0" MinWidth="80" MaxWidth="200" Text="{Binding NewSnapshotName, Mode=TwoWay}" />
+                <TextBox Margin="10,0,0,0" MinWidth="80" MaxWidth="130" Text="{Binding NewSnapshotName, Mode=TwoWay}" />
                 <Button Margin="10,0,0,0" Content="Delete Selected" Command="{Binding DeleteSnapshotCommand}" />
             </StackPanel>
             <ListView 

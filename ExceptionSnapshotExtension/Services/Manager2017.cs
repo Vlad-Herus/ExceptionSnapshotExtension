@@ -16,11 +16,6 @@ namespace ExceptionSnapshotExtension.Services
     {
         private delegate void UpdateException(ref EXCEPTION_INFO150 exception, out bool changed);
 
-#pragma warning disable 67 //TODO: use or remove
-        public event OnExceptionDelegade ExceptionCaught;
-#pragma warning restore 67
-
-
         #region Services
 
         private IDebuggerInternal15 InternalDebugger
@@ -59,13 +54,6 @@ namespace ExceptionSnapshotExtension.Services
 
                 return m_TopExceptions;
             }
-        }
-
-        public ExceptionInfo CurrentException => throw new NotImplementedException();
-
-        public void ApplyException(ExceptionInfo info)
-        {
-            throw new NotImplementedException();
         }
 
         public void DisableAll()

@@ -54,6 +54,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Services\Manager2015.cs" />
+    <Compile Include="Services\Manager201X.cs" />
     <Compile Include="UI\AttachedCommandBehavior\BehaviorBinding.cs" />
     <Compile Include="UI\AttachedCommandBehavior\CommandBehavior.cs" />
     <Compile Include="UI\AttachedCommandBehavior\CommandBehaviorBinding.cs" />

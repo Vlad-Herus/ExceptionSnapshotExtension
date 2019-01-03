@@ -10,16 +10,7 @@ namespace ExceptionSnapshotExtension.Model
 
     internal interface IExceptionManager
     {
-        event OnExceptionDelegade ExceptionCaught;
-
         bool SupportsConditions { get; }
-
-        /// <summary>
-        /// Null if debugger is not in break mode because of exception
-        /// </summary>
-        ExceptionInfo CurrentException { get; }
-
-        void ApplyException(ExceptionInfo info);
 
         void EnableAll();
         void DisableAll();
