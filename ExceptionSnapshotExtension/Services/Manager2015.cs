@@ -6,12 +6,13 @@ using Microsoft.VisualStudio.Shell.Interop;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace ExceptionSnapshotExtension.Services
 {
-    class Manager2015 : IExceptionManager
+    class Manager2015 : Manager201X<EXCEPTION_INFO>
     {
         private IDebuggerInternal11 InternalDebugger
         {
@@ -30,28 +31,96 @@ namespace ExceptionSnapshotExtension.Services
             }
         }
 
-        private bool SessionAvailable => Session != null;
+        public override bool SessionAvailable => Session != null;
 
-        public bool SupportsConditions => false;
+        public override bool SupportsConditions => false;
 
-        public void DisableAll()
+        protected override EXCEPTION_INFO[] GetDefaultExceptions(EXCEPTION_INFO? parent)
         {
-            throw new NotImplementedException();
+            var parentArray = (!parent.HasValue) ? null : new EXCEPTION_INFO[]
+            {
+                parent.Value
+            };
+
+            IEnumDebugExceptionInfo2 val = default(IEnumDebugExceptionInfo2);
+            if (Session.EnumDefaultExceptions(parentArray, out val) == 0 && val != null)
+            {
+                return val.ToArray();
+            }
+            else
+            {
+                return new EXCEPTION_INFO[] { };
+            }
         }
 
-        public void EnableAll()
+        protected override EXCEPTION_INFO[] GetSetExceptions(EXCEPTION_INFO parent)
         {
-            throw new NotImplementedException();
+            IEnumDebugExceptionInfo2 enumerator = default(IEnumDebugExceptionInfo2);
+            if (Session.EnumSetExceptions(null, null, parent.guidType, out enumerator) == 0 && enumerator != null)
+            {
+                return enumerator.ToArray();
+            }
+            else
+            {
+                return new EXCEPTION_INFO[] { };
+            }
         }
 
-        public Snapshot GetCurrentExceptionSnapshot()
+        protected override bool IsExceptionTopException(EXCEPTION_INFO exception)
         {
-            throw new NotImplementedException();
+            return TopExceptions.Any(top => top.bstrExceptionName == exception.bstrExceptionName);
         }
 
-        public void RestoreSnapshot(Snapshot snapshot)
+        protected override void RemoveAllSetExceptions()
         {
-            throw new NotImplementedException();
+            Guid guidType = Guid.Empty;
+            Marshal.ThrowExceptionForHR(
+                      Session.RemoveAllSetExceptions(ref guidType));
+        }
+
+        protected override void SetBreakFirstChance(ref EXCEPTION_INFO exception, bool breakFirstChance)
+        {
+            if (breakFirstChance)
+            {
+                var state = (uint)exception.dwState;
+                Constants.EnableException(ref state);
+                exception.dwState = (enum_EXCEPTION_STATE)state;
+            }
+            else
+            {
+                var state = (uint)exception.dwState;
+                Constants.DisableException(ref state);
+                exception.dwState = (enum_EXCEPTION_STATE)state;
+            }
+        }
+
+        protected override void SetExceptions(IEnumerable<EXCEPTION_INFO> exceptions)
+        {
+            foreach (var ex in exceptions)
+            {
+                Marshal.ThrowExceptionForHR(
+                    Session.SetException(new EXCEPTION_INFO[] { ex }));
+            }
+        }
+
+        protected override EXCEPTION_INFO ConvertFromGeneric(ExceptionInfo exception)
+        {
+            return new EXCEPTION_INFO
+            {
+                bstrExceptionName = exception.Name,
+                guidType = TopExceptions.First(ex => ex.bstrExceptionName == exception.GroupName).guidType,
+                dwState = (enum_EXCEPTION_STATE)exception.State,
+                dwCode = exception.Code,
+            };
+        }
+
+        protected override ExceptionInfo ConvertToGeneric(EXCEPTION_INFO exception)
+        {
+            return new ExceptionInfo(exception.bstrExceptionName, TopExceptions.First(ex => ex.guidType == exception.guidType).bstrExceptionName)
+            {
+                State = (uint)exception.dwState,
+                Code = exception.dwCode,
+            };
         }
     }
 }

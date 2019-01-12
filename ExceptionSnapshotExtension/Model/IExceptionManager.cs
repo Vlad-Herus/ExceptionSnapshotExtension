@@ -12,6 +12,8 @@ namespace ExceptionSnapshotExtension.Model
     {
         bool SupportsConditions { get; }
 
+        bool SessionAvailable { get; }
+
         void EnableAll();
         void DisableAll();
 

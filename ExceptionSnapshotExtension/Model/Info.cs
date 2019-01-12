@@ -1,5 +1,6 @@
 ﻿using ExceptionSnapshotExtension.Services;
 using Microsoft.VisualStudio.Debugger.Interop;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,7 @@ namespace ExceptionSnapshotExtension.Model
         public string GroupName { get; }
         public uint State { get; set; }
         public uint Code { get; set; }
+        [JsonIgnore]
         public bool BreakFirstChance
         {
             get
@@ -30,7 +32,7 @@ namespace ExceptionSnapshotExtension.Model
                 }
                 else
                 {
-                    Constants.EnableException(ref state);
+                    Constants.DisableException(ref state);
                 }
 
                 State = state;
