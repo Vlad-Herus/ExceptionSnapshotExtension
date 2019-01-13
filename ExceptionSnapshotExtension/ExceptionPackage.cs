@@ -67,7 +67,21 @@ namespace ExceptionSnapshotExtension
             // initialization is the Initialize method.
             this.AddOptionKey(SETTINGS_KEY);
             m_SnapshotSerializer = new JsonSerialize();
-            m_ExceptionManager = new Manager2017();
+
+            var versionDetect = new VsVersionDetect();
+            if (versionDetect.VS2015)
+            {
+                m_ExceptionManager = new Manager2015();
+            }
+            else if (versionDetect.VS2017OrLater)
+            {
+                m_ExceptionManager = new Manager2017();
+            }
+            else
+            {
+                throw new Exception($"Visual Studio version {versionDetect.FullVersion} is not supported by Exception Snapshot Extension.");
+            }
+
             MasterViewModel = new ToolWindowVM(m_ExceptionManager);
         }
 
@@ -86,7 +100,6 @@ namespace ExceptionSnapshotExtension
             // Do any initialization that requires the UI thread after switching to the UI thread.
             await this.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
             await SnapshotWindowCommand.InitializeAsync(this);
-            ExceptionManagerProto.Instance.AttachEvents();
         }
 
         protected override void OnSaveOptions(string key, Stream stream)

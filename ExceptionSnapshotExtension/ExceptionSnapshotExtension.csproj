@@ -57,6 +57,7 @@
     <Compile Include="Services\ExceptionInfoEnumerator2015.cs" />
     <Compile Include="Services\Manager2015.cs" />
     <Compile Include="Services\Manager201X.cs" />
+    <Compile Include="Services\VsVersion.cs" />
     <Compile Include="UI\AttachedCommandBehavior\BehaviorBinding.cs" />
     <Compile Include="UI\AttachedCommandBehavior\CommandBehavior.cs" />
     <Compile Include="UI\AttachedCommandBehavior\CommandBehaviorBinding.cs" />
@@ -79,7 +80,7 @@
     <Compile Include="Import\IDataTipManager.cs" />
     <Compile Include="Import\IDebuggerInternal10.cs" />
     <Compile Include="Import\IDebuggerInternal11.cs" />
-    <Compile Include="Import\IDebuggerInternal15.cs" />
+    <Compile Include="Import\2017\IDebuggerInternal15.cs" />
     <Compile Include="Import\IDebuggerInternalEvents.cs" />
     <Compile Include="Import\IMAGEINFO_TYPE.cs" />
     <Compile Include="Model\IExceptionManager.cs" />
@@ -135,8 +136,12 @@
     <Reference Include="Microsoft.VisualStudio.Debugger.Interop.14.0, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
-    <Reference Include="Microsoft.VisualStudio.Debugger.Interop.15.0, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
-    <Reference Include="Microsoft.VisualStudio.Debugger.InteropA, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <Reference Include="Microsoft.VisualStudio.Debugger.Interop.15.0, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.VisualStudio.Debugger.Interop.15.0.15.9.28307\lib\net20\Microsoft.VisualStudio.Debugger.Interop.15.0.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.Debugger.InteropA, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <HintPath>..\packages\Microsoft.VisualStudio.Debugger.InteropA.9.0.21023\lib\net10\Microsoft.VisualStudio.Debugger.InteropA.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.VisualStudio.Imaging, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.VisualStudio.Imaging.14.3.25407\lib\net45\Microsoft.VisualStudio.Imaging.dll</HintPath>
     </Reference>
@@ -246,6 +251,10 @@
     </VSCTCompile>
     <Content Include="..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll">
       <Link>Newtonsoft.Json.dll</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\packages\Microsoft.VisualStudio.Debugger.Interop.15.0.15.9.28307\lib\net20\Microsoft.VisualStudio.Debugger.Interop.15.0.dll">
+      <Link>Microsoft.VisualStudio.Debugger.Interop.15.0.dll</Link>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Resources\ExceptionPackage.ico" />
