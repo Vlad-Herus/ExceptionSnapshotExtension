@@ -7,6 +7,7 @@
              xmlns:VM="clr-namespace:ExceptionSnapshotExtension.Viewmodels;assembly=ExceptionSnapshotExtension"
              xmlns:Ctr="clr-namespace:ExceptionSnapshotExtension.Controls"
              xmlns:acb="clr-namespace:AttachedCommandBehavior"
+             xmlns:vs_shell="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.14.0"
              Background="{DynamicResource {x:Static vsshell:VsBrushes.WindowKey}}"
              Foreground="{DynamicResource {x:Static vsshell:VsBrushes.WindowTextKey}}"
              mc:Ignorable="d"
@@ -19,25 +20,40 @@
             <Setter Property="Background" Value="{DynamicResource {x:Static vsshell:VsBrushes.SortBackgroundKey}}"/>
             <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vsshell:VsBrushes.SearchBoxBorderKey}}"/>
         </Style>
-        <Style TargetType="{x:Type Button}">
-            <Setter Property="Padding" Value="7,0,7,0"/>
-            <Setter Property="Foreground" Value="{DynamicResource {x:Static vsshell:VsBrushes.ButtonTextKey}}"/>
-            <Setter Property="Background" Value="{DynamicResource {x:Static vsshell:VsBrushes.DockTargetButtonBackgroundGradientKey}}"/>
+        <Style TargetType="Button">
+            <Setter Property="SnapsToDevicePixels" Value="true" />
+            <Setter Property="OverridesDefaultStyle" Value="true" />
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static vsshell:VsBrushes.ToolWindowTextKey}}" />
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type Button}">
-                        <Border Background="{TemplateBinding Background}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <ControlTemplate TargetType="Button">
+
+                        <Border x:Name="Border"
+                                    Background="{x:Null}"
+                                    BorderBrush="Transparent"
+                                    BorderThickness="1">
+                            <ContentPresenter Margin="2"
+                                                  HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center"
+                                                  RecognizesAccessKey="True" />
                         </Border>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarMouseOverBackgroundGradientKey}}" />
+                                <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarSelectedBorderKey}}" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarMouseDownBackgroundGradientKey}}" />
+                                <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarMouseDownBorderKey}}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="{DynamicResource {x:Static vsshell:VsBrushes.ButtonHighlightKey}}"/>
-                </Trigger>
-            </Style.Triggers>
         </Style>
+
     </UserControl.Resources>
     <Grid>
         <Grid Margin="5">
@@ -54,7 +70,7 @@
             </StackPanel>
             <StackPanel Grid.Row="2" Orientation="Horizontal">
                 <Button Content="Save Snapshot" Command="{Binding SaveSnapshotCommand}"/>
-                <TextBox Margin="10,0,0,0" MinWidth="80" MaxWidth="130" Text="{Binding NewSnapshotName, Mode=TwoWay}" />
+                <TextBox Margin="10,0,0,0" MinWidth="80" MaxWidth="130" VerticalContentAlignment="Center" Text="{Binding NewSnapshotName, Mode=TwoWay}" />
                 <Button Margin="10,0,0,0" Content="Delete Selected" Command="{Binding DeleteSnapshotCommand}" />
             </StackPanel>
             <ListView 
@@ -74,6 +90,12 @@
                             <DataTrigger Binding="{Binding Path=FieldDef.DispDetail, Mode=OneWay}" Value="False">
                                 <Setter Property="Visibility" Value="Collapsed"/>
                             </DataTrigger>
+                            <Trigger Property="IsSelected" Value="true">
+                                <Setter Property="Background" Value="{DynamicResource {x:Static vs_shell:TreeViewColors.SelectedItemActiveBrushKey}}" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Background" Value="{DynamicResource {x:Static vs_shell:TreeViewColors.GlyphMouseOverBrushKey}}" />
+                            </Trigger>
                         </Style.Triggers>
                         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                         <Setter Property="acb:CommandBehavior.Event" Value="MouseDoubleClick"/>
