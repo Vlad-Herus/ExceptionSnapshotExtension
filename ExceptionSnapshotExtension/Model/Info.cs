@@ -15,6 +15,7 @@ namespace ExceptionSnapshotExtension.Model
         public string GroupName { get; }
         public uint State { get; set; }
         public uint Code { get; set; }
+
         [JsonIgnore]
         public bool BreakFirstChance
         {
@@ -38,6 +39,7 @@ namespace ExceptionSnapshotExtension.Model
                 State = state;
             }
         }
+
         public Condition[] Conditions { get; set; }
 
         public ExceptionInfo(string name, string groupName)

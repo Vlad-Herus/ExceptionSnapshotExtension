@@ -10,8 +10,6 @@ namespace ExceptionSnapshotExtension.Model
 
     internal interface IExceptionManager
     {
-        bool SupportsConditions { get; }
-
         bool SessionAvailable { get; }
 
         void EnableAll();
@@ -19,5 +17,10 @@ namespace ExceptionSnapshotExtension.Model
 
         void RestoreSnapshot(Snapshot snapshot);
         Snapshot GetCurrentExceptionSnapshot();
+
+        /// <summary>
+        /// Checks if Break first chance for snapshot matches current exception settings
+        /// </summary>
+        bool VerifySnapshot(Snapshot snapshot);
     }
 }

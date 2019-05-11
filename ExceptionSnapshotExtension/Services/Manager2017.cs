@@ -12,9 +12,9 @@ using System.Threading.Tasks;
 
 namespace ExceptionSnapshotExtension.Services
 {
-    internal class Manager2017 : Manager201X<EXCEPTION_INFO150>
+    internal class Manager2017 : IExceptionManager
     {
-        #region Services
+        private delegate void UpdateException(ref EXCEPTION_INFO150 exception, out bool changed);
 
         private IDebuggerInternal15 InternalDebugger
         {
@@ -33,13 +33,99 @@ namespace ExceptionSnapshotExtension.Services
             }
         }
 
+        private EXCEPTION_INFO150[] m_TopExceptions;
+
+        public bool SessionAvailable => Session != null;
+
+        EXCEPTION_INFO150[] TopExceptions
+        {
+            get
+            {
+                if (m_TopExceptions == null)
+                {
+                    m_TopExceptions = GetDefaultExceptions(null);
+                }
+
+                return m_TopExceptions;
+            }
+        }
+
+        #region  public
+
+        public void DisableAll()
+        {
+            ThrowIfNoSession();
+
+            SetAll((ref EXCEPTION_INFO150 info, out bool changed) =>
+            {
+                changed = true;
+                SetBreakFirstChance(ref info, false);
+            });
+        }
+
+        public void EnableAll()
+        {
+            ThrowIfNoSession();
+
+            SetAll((ref EXCEPTION_INFO150 info, out bool changed) =>
+            {
+                changed = true;
+                SetBreakFirstChance(ref info, true);
+            });
+        }
+
+        public Snapshot GetCurrentExceptionSnapshot()
+        {
+            ThrowIfNoSession();
+
+            var exceptions = TopExceptions.SelectMany(top => GetSetExceptions(top));
+
+            return new Snapshot
+            {
+                Exceptions = exceptions.Select(ex => ConvertToGeneric(ex)).ToArray()
+            };
+        }
+
+        public void RestoreSnapshot(Snapshot snapshot)
+        {
+            ThrowIfNoSession();
+
+            RemoveAllSetExceptions();
+
+            var nativeExceptions = snapshot.
+                Exceptions.
+                Select(ex => ConvertFromGeneric(ex));
+            var topExceptions = nativeExceptions.Where(ex => IsExceptionTopException(ex));
+
+            SetExceptions(topExceptions);
+            SetExceptions(nativeExceptions.Except(topExceptions));
+        }
+
+        public bool VerifySnapshot(Snapshot snapshot)
+        {
+            var current = GetCurrentExceptionSnapshot();
+
+            foreach (var ex in snapshot.Exceptions)
+            {
+                var corresponding = current.Exceptions.SingleOrDefault(corEx =>
+                corEx.Name == ex.Name &&
+                corEx.Code == ex.Code &&
+                corEx.GroupName == ex.GroupName);
+
+                if (ex.BreakFirstChance != corresponding.BreakFirstChance)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         #endregion
 
-        public override bool SupportsConditions => true;
+        #region Private
 
-        public override bool SessionAvailable => Session != null;
-
-        protected override EXCEPTION_INFO150[] GetDefaultExceptions(EXCEPTION_INFO150? parent)
+        EXCEPTION_INFO150[] GetDefaultExceptions(EXCEPTION_INFO150? parent)
         {
             var parentArray = (!parent.HasValue) ? null : new EXCEPTION_INFO150[]
             {
@@ -57,7 +143,7 @@ namespace ExceptionSnapshotExtension.Services
             }
         }
 
-        protected override EXCEPTION_INFO150[] GetSetExceptions(EXCEPTION_INFO150 parent)
+        EXCEPTION_INFO150[] GetSetExceptions(EXCEPTION_INFO150 parent)
         {
             IEnumDebugExceptionInfo150 enumerator = default(IEnumDebugExceptionInfo150);
             if (Session.EnumSetExceptions(parent.guidType, out enumerator) == 0 && enumerator != null)
@@ -70,19 +156,19 @@ namespace ExceptionSnapshotExtension.Services
             }
         }
 
-        protected override bool IsExceptionTopException(EXCEPTION_INFO150 exception)
+        bool IsExceptionTopException(EXCEPTION_INFO150 exception)
         {
             return TopExceptions.Any(top => top.bstrExceptionName == exception.bstrExceptionName);
         }
 
-        protected override void RemoveAllSetExceptions()
+        void RemoveAllSetExceptions()
         {
             Guid guidType = Guid.Empty;
             Marshal.ThrowExceptionForHR(
                       InternalDebugger.CurrentSession.RemoveAllSetExceptions(ref guidType));
         }
 
-        protected override void SetBreakFirstChance(ref EXCEPTION_INFO150 exception, bool breakFirstChance)
+        void SetBreakFirstChance(ref EXCEPTION_INFO150 exception, bool breakFirstChance)
         {
             if (breakFirstChance)
             {
@@ -94,7 +180,7 @@ namespace ExceptionSnapshotExtension.Services
             }
         }
 
-        protected override void SetExceptions(IEnumerable<EXCEPTION_INFO150> exceptions)
+        void SetExceptions(IEnumerable<EXCEPTION_INFO150> exceptions)
         {
             ExceptionInfoEnumerator2017 enumerator =
                     new ExceptionInfoEnumerator2017(exceptions);
@@ -102,7 +188,7 @@ namespace ExceptionSnapshotExtension.Services
                 Session.SetExceptions(enumerator));
         }
 
-        protected override EXCEPTION_INFO150 ConvertFromGeneric(ExceptionInfo exception)
+        EXCEPTION_INFO150 ConvertFromGeneric(ExceptionInfo exception)
         {
             return new EXCEPTION_INFO150
             {
@@ -114,7 +200,7 @@ namespace ExceptionSnapshotExtension.Services
             };
         }
 
-        protected override ExceptionInfo ConvertToGeneric(EXCEPTION_INFO150 exception)
+        ExceptionInfo ConvertToGeneric(EXCEPTION_INFO150 exception)
         {
             return new ExceptionInfo(exception.bstrExceptionName, TopExceptions.First(ex => ex.guidType == exception.guidType).bstrExceptionName)
             {
@@ -122,6 +208,56 @@ namespace ExceptionSnapshotExtension.Services
                 Code = exception.dwCode,
                 Conditions = exception.pConditions.ToArray()
             };
+        }
+
+        #endregion
+
+        void SetAll(UpdateException action)
+        {
+            List<EXCEPTION_INFO150> updated = new List<EXCEPTION_INFO150>();
+            for (int i = 0; i < TopExceptions.Length; i++)
+            {
+                action(ref TopExceptions[i], out bool changed);
+                if (changed)
+                {
+                    updated.Add(TopExceptions[i]);
+                }
+            }
+
+            if (updated.Any())
+            {
+                SetExceptions(updated);
+                updated.Clear();
+            }
+
+            // For some reason top level exceptions (groups) must be passed to IDebugSession150::SetExceptions() separately from normal exceptions
+            List<EXCEPTION_INFO150> allChildren = new List<EXCEPTION_INFO150>();
+            foreach (var topException in TopExceptions)
+            {
+                var childExceptions = GetDefaultExceptions(topException);
+                for (int i = 0; i < childExceptions.Count(); i++)
+                {
+                    action(ref childExceptions[i], out bool changed);
+                    if (changed)
+                    {
+                        updated.Add(childExceptions[i]);
+                    }
+                }
+                allChildren.AddRange(childExceptions);
+            }
+
+            if (updated.Any())
+            {
+                SetExceptions(updated);
+            }
+        }
+
+        void ThrowIfNoSession()
+        {
+            if (!SessionAvailable)
+            {
+                throw new Exception("Session not available.");
+            }
         }
     }
 }

@@ -19,6 +19,10 @@
 
   <!--This header contains the command ids for the menus provided by the shell. -->
   <Extern href="vsshlids.h"/>
+  
+  
+  <Extern href="VSDbgCmd.h"/>
+  <Extern href="VsDebugGuids.h"/>
 
   <!--The Commands section is where commands, menus, and menu groups are defined.
       This section uses a Guid to identify the package that provides the command defined inside it. -->
@@ -42,11 +46,11 @@
               <CommandFlag>DefaultInvisible</CommandFlag>
               <CommandFlag>DynamicVisibility</CommandFlag>
           If you do not want an image next to your command, remove the Icon node /> -->
-      <Button guid="guidExceptionPackageCmdSet" id="SnapshotWindowCommandId" priority="0x0100" type="Button">
-        <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1"/>
+      <Button guid="guidExceptionPackageCmdSet" id="SnapshotWindowCommandId" priority="0x0210" type="Button">
+        <Parent guid="guidVSDebugGroup" id="IDG_DEBUG_WINDOWS_GENERAL"/>
         <Icon guid="guidImages" id="bmpPic1" />
         <Strings>
-          <ButtonText>SnapshotWindow</ButtonText>
+          <ButtonText>Exception Snapshots</ButtonText>
         </Strings>
       </Button>
     </Buttons>
@@ -58,7 +62,7 @@
             bitmap strip containing the bitmaps and then there are the numeric ids of the elements used
             inside a button definition. An important aspect of this declaration is that the element id
             must be the actual index (1-based) of the bitmap inside the bitmap strip. -->
-      <Bitmap guid="guidImages" href="Resources\SnapshotWindowCommand.png" usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows, bmpPicStrikethrough"/>
+      <Bitmap guid="guidImages" href="Resources\ExceptionBreak16.png" usedList="bmpPic1"/>
     </Bitmaps>
   </Commands>
 

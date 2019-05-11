@@ -70,7 +70,17 @@
             </StackPanel>
             <StackPanel Grid.Row="2" Orientation="Horizontal">
                 <Button Content="Save Snapshot" Command="{Binding SaveSnapshotCommand}"/>
-                <TextBox Margin="10,0,0,0" MinWidth="80" MaxWidth="130" VerticalContentAlignment="Center" Text="{Binding NewSnapshotName, Mode=TwoWay}" />
+                <TextBox Margin="10,0,0,0" MinWidth="80" MaxWidth="130" VerticalContentAlignment="Center" Text="{Binding NewSnapshotName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <TextBox.Style>
+                        <Style TargetType="TextBox">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding FailedValidation}" Value="True">
+                                    <Setter Property="BorderBrush" Value="Red"></Setter>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBox.Style>
+                </TextBox>
                 <Button Margin="10,0,0,0" Content="Delete Selected" Command="{Binding DeleteSnapshotCommand}" />
             </StackPanel>
             <ListView 

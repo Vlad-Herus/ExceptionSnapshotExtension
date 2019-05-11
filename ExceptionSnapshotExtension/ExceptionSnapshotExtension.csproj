@@ -54,10 +54,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Services\ExceptionInfoEnumerator2015.cs" />
-    <Compile Include="Services\Manager2015.cs" />
-    <Compile Include="Services\Manager201X.cs" />
-    <Compile Include="Services\VsVersion.cs" />
+    <Compile Include="Services\Manager2017.cs" />
     <Compile Include="UI\AttachedCommandBehavior\BehaviorBinding.cs" />
     <Compile Include="UI\AttachedCommandBehavior\CommandBehavior.cs" />
     <Compile Include="UI\AttachedCommandBehavior\CommandBehaviorBinding.cs" />
@@ -89,7 +86,6 @@
     <Compile Include="Services\ConditionExtension.cs" />
     <Compile Include="Services\Constants.cs" />
     <Compile Include="Services\JsonSerialize.cs" />
-    <Compile Include="Services\Manager2017.cs" />
     <Compile Include="Model\ISerialize.cs" />
     <Compile Include="UI\Viewmodels\ExceptionInfoVM.cs" />
     <Compile Include="UI\Viewmodels\GroupVM.cs" />
@@ -244,6 +240,12 @@
     <Analyzer Include="..\packages\Microsoft.VisualStudio.Threading.Analyzers.15.8.122\analyzers\cs\Microsoft.VisualStudio.Threading.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="LICENSE.txt" />
+    <Content Include="Resources\ExceptionBreak.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Resources\ExceptionBreak16.png" />
     <Content Include="TODO.txt" />
     <VSCTCompile Include="ExceptionPackage.vsct">
       <ResourceName>Menus.ctmenu</ResourceName>
@@ -257,8 +259,6 @@
       <Link>Microsoft.VisualStudio.Debugger.Interop.15.0.dll</Link>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Resources\ExceptionPackage.ico" />
-    <Content Include="Resources\SnapshotWindowCommand.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="VSPackage.resx">

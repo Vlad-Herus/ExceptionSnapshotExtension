@@ -22,6 +22,8 @@ namespace ExceptionSnapshotExtension.Viewmodels
         private RelayCommand m_DeleteSnapshotCommand;
         private RelayCommand m_ActivateSnapshotCommand;
 
+        private string m_NewSnapshotName;
+
         public ObservableCollection<SnapshotVM> SnapshotVms { get; private set; }
 
         public IEnumerable<Snapshot> Snapshots
@@ -39,17 +41,31 @@ namespace ExceptionSnapshotExtension.Viewmodels
                 }
             }
         }
-        public string NewSnapshotName { get; set; }
-        
+        public string NewSnapshotName
+        {
+            get { return m_NewSnapshotName; }
+            set
+            {
+                m_NewSnapshotName = value;
+                if (!string.IsNullOrEmpty(m_NewSnapshotName))
+                {
+                    FailedValidation = false;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FailedValidation)));
+                }
+            }
+        }
+
         /// <summary>
         /// One way to source binding
         /// </summary>
         public SnapshotVM SelectedSnapshot { get; set; }
-        
+
         /// <summary>
         /// Two way binding
         /// </summary>
         public int SelectedSnapshotIndex { get; set; }
+
+        public bool FailedValidation { get; set; }
 
         public RelayCommand EnableAllCommand
         {
@@ -91,10 +107,18 @@ namespace ExceptionSnapshotExtension.Viewmodels
                 {
                     m_SaveSnapshotCommand = new RelayCommand(p => true, p =>
                     {
-                        var snapshot = m_ExceptionManager.GetCurrentExceptionSnapshot();
-                        snapshot.Name = NewSnapshotName;
-                        SnapshotVms.Add(new SnapshotVM(snapshot));
-                        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SnapshotVms)));
+                        if (!string.IsNullOrEmpty(NewSnapshotName))
+                        {
+                            var snapshot = m_ExceptionManager.GetCurrentExceptionSnapshot();
+                            snapshot.Name = NewSnapshotName;
+                            SnapshotVms.Add(new SnapshotVM(snapshot));
+                            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SnapshotVms)));
+                        }
+                        else
+                        {
+                            FailedValidation = true;
+                            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FailedValidation)));
+                        }
                     });
                 }
 
@@ -138,7 +162,18 @@ namespace ExceptionSnapshotExtension.Viewmodels
                     {
                         if (p is SnapshotVM snapshotVM)
                         {
-                            m_ExceptionManager.RestoreSnapshot(snapshotVM.Snapshot);
+                            for (int i = 0; i < 10; i++) // I've had issues with snapshot not being restored after first attempt.
+                            {
+                                if (!m_ExceptionManager.VerifySnapshot(snapshotVM.Snapshot))
+                                {
+                                    if (i > 0)
+                                    {
+                                        System.Diagnostics.Trace.WriteLine($"Failed to Restore. Attempt {i + 1}");
+                                    }
+
+                                    m_ExceptionManager.RestoreSnapshot(snapshotVM.Snapshot);
+                                }
+                            }
                         }
                     });
                 }

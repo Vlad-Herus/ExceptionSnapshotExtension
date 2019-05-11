@@ -10,6 +10,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace ExceptionSnapshotExtension
 {
@@ -54,7 +55,7 @@ namespace ExceptionSnapshotExtension
                     remainingSpace -= (listView.View as GridView).Columns[i].ActualWidth;
                 }
             }
-            
+
             (listView.View as GridView).Columns[autoFillColumnIndex].Width = remainingSpace >= 0 ? remainingSpace : 0;
         }
     }

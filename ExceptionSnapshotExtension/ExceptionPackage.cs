@@ -68,19 +68,7 @@ namespace ExceptionSnapshotExtension
             this.AddOptionKey(SETTINGS_KEY);
             m_SnapshotSerializer = new JsonSerialize();
 
-            var versionDetect = new VsVersionDetect();
-            if (versionDetect.VS2015)
-            {
-                m_ExceptionManager = new Manager2015();
-            }
-            else if (versionDetect.VS2017OrLater)
-            {
-                m_ExceptionManager = new Manager2017();
-            }
-            else
-            {
-                throw new Exception($"Visual Studio version {versionDetect.FullVersion} is not supported by Exception Snapshot Extension.");
-            }
+            m_ExceptionManager = new Manager2017();
 
             MasterViewModel = new ToolWindowVM(m_ExceptionManager);
         }
