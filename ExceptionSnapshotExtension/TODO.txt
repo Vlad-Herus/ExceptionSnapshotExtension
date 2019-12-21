@@ -6,3 +6,25 @@ DONE 3 Test to make sure restore operation is accurate for multiple different sn
 6 Add option to save snapshots per machine/user versus per solution
 DONE 7 Support VS dark style on all controls
 8 Make sure modules are saved/restored 
+
+
+
+information : 
+ExceptionSettingCollectionViewModel
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\Common7\IDE\CommonExtensions\Platform\Debugger\VSDebugCoreUI.dll
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\Common7\IDE\PrivateAssemblies\Microsoft.VisualStudio.Debugger.Interop.Internal.dll
+IDebuggerInternal
+https://github.com/ashmind/ExceptionBreaker
+ExceptionSettingViewModel::BreakOnFirstChance to see how to manipulate internal exception setting
+
+Working with current exception VSDebugCoreUI.ExceptionHelper::Session::ShowInEditor
+System.Runtime.InteropServices::DebuggerEvents
+
+https://github.com/icsharpcode/SharpDevelop/tree/master/src/Libraries/SharpTreeView/ICSharpCode.TreeView.Demo
+
+C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\devenv.exe
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\Common7\IDE\devenv.exe
+/rootsuffix Exp
+
+https://docs.microsoft.com/en-us/visualstudio/extensibility/ux-guidelines/color-value-reference-for-visual-studio?view=vs-2017
+https://docs.microsoft.com/en-us/visualstudio/extensibility/ux-guidelines/shared-colors-for-visual-studio?view=vs-2017d
